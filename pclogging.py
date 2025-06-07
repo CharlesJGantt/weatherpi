@@ -25,27 +25,27 @@ except ImportError:
         import config
 
 if (config.enable_MySQL_Logging == True):
-	import MySQLdb as mdb
+    import MySQLdb as mdb
 
 
 def log(level, source, message):
 
 
- if (config.enable_MySQL_Logging == True):	
+ if (config.enable_MySQL_Logging == True):    
    LOWESTDEBUG = 0
-	# open mysql database
+    # open mysql database
 
-	# write log
-
-
-	# commit
+    # write log
 
 
-	# close
+    # commit
+
+
+    # close
 
    if (level >= LOWESTDEBUG):
         try:
-	
+    
                 #print("trying database")
                 con = mdb.connect('localhost', 'root', config.MySQL_Password, 'GroveWeatherPi');
 
@@ -53,16 +53,16 @@ def log(level, source, message):
                 #print "before query"
 
                 query = "INSERT INTO systemlog(TimeStamp, Level, Source, Message) VALUES(UTC_TIMESTAMP(), %i, '%s', '%s')" % (level, source, message)
-	        #print("query=%s" % query)
+            #print("query=%s" % query)
 
                 cur.execute(query)
 
                 con.commit()
 
 
-        except mdb.Error, e:
+        except mdb.Error as e:
 
-                print "Error %d: %s" % (e.args[0],e.args[1])
+                print("Error %d: %s" % (e.args[0],e.args[1]))
                 con.rollback()
                 #sys.exit(1)
 

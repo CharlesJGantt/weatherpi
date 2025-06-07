@@ -6,4 +6,4 @@ easily adaptable to make work on non-Raspberry Pi things too.
 
 """
 
-from RPi_AS3935 import RPi_AS3935
+from .RPi_AS3935 import RPi_AS3935

@@ -32,7 +32,7 @@ class AM2315:
 
         self.powerpin = powerpin
         # for Grove PowerSave
-        if (self.powerpin <> 0):
+        if (self.powerpin != 0):
             GPIO.setup(self.powerpin, GPIO.OUT)
             GPIO.output(self.powerpin, True)
             time.sleep(1.0)
@@ -95,7 +95,7 @@ class AM2315:
         # use modified read_i2c_block_data for read from AM2315 
         tmp = self._device.am2315_read_i2c_block_data(AM2315_I2CADDR, AM2315_READREG,8)
         #tmp = self._device.readList(AM2315_READREG,8)
-        print(' '.join(map(str, tmp)))
+        print((' '.join(map(str, tmp))))
 
         self.temperature = (((tmp[4] & 0x7F) << 8) | tmp[5]) / 10.0
         self.humidity = ((tmp[2] << 8) | tmp[3]) / 10.0
@@ -110,15 +110,15 @@ class AM2315:
         if (self.crc != c) or (c == 0):
         #if (self.crc != c): 
             if (AM2315DEBUG == True):
-                print "AM2314 BAD CRC"
+                print("AM2314 BAD CRC")
             self.crc = -1
         else:
 
             if (AM2315DEBUG == True):
-                print "Fast Read AM2315temperature=",self.temperature
-                print "Fast Read AM2315humdity=",self.humidity
-                print "Fast Read AM2315crc=",self.crc
-                print "Fast Read AM2315c=",c
+                print("Fast Read AM2315temperature=",self.temperature)
+                print("Fast Read AM2315humdity=",self.humidity)
+                print("Fast Read AM2315crc=",self.crc)
+                print("Fast Read AM2315c=",c)
 
 
     def _read_data(self):
@@ -132,7 +132,7 @@ class AM2315:
                     time.sleep(0.050)
                 except:
                     if (AM2315DEBUG == True):
-                        print "Wake Byte Fail"
+                        print("Wake Byte Fail")
                     time.sleep(2.000)                    
                     self._device.write_byte_data(AM2315_I2CADDR, AM2315_READREG, 0x00)
                     time.sleep(0.001)
@@ -154,18 +154,18 @@ class AM2315:
                         if (self.humidity <0.01 or self.humidity > 100.0):
                             # OK, humidity is bad.  Ignore
                             if (AM2315DEBUG == True):
-                                print ">>>>>>>>>>>>>"
-                                print "Bad AM2315 Humidity = ", self.temperature
-                                print ">>>>>>>>>>>>>"
+                                print(">>>>>>>>>>>>>")
+                                print("Bad AM2315 Humidity = ", self.temperature)
+                                print(">>>>>>>>>>>>>")
                                 self.badreadings = self.badreadings+1
                                 tmp = None
                         else:
                             if (abs(self.temperature - self.AM2315PreviousTemp) > 10.0):
                                 # OK, temp is bad.  Ignore
                                 if (AM2315DEBUG == True):
-                                    print ">>>>>>>>>>>>>"
-                                    print "Bad AM2315 Temperature = ", self.temperature
-                                    print ">>>>>>>>>>>>>"
+                                    print(">>>>>>>>>>>>>")
+                                    print("Bad AM2315 Temperature = ", self.temperature)
+                                    print(">>>>>>>>>>>>>")
                                     self.badreadings = self.badreadings+1
                                     tmp = None
                             else:
@@ -181,14 +181,14 @@ class AM2315:
                 if (AM2315DEBUG == True):
                     template = "An exception of type {0} occurred. Arguments:\n{1!r}"
                     message = template.format(type(ex).__name__, ex.args)
-                    print message
+                    print(message)
                     #print traceback.format_exc()
-                    print "AM2315readCount = ", count
+                    print("AM2315readCount = ", count)
             count += 1
             self.retrys += 1
             time.sleep(0.10)
             # only do three power cycle attempts
-            if (self.powerpin <> 0):
+            if (self.powerpin != 0):
                 if (count > MAXREADATTEMPT):
                     self.powerCycleAM2315()
                     if (powercyclecount <=2): 
@@ -196,7 +196,7 @@ class AM2315:
                         count = 0 
             
         if (AM2315DEBUG == True):
-            print "--->looking at good data"
+            print("--->looking at good data")
 
         # GET THE DATA OUT OF THE LIST WE READ
         self.humidity = ((tmp[2] << 8) | tmp[3]) / 10.0
@@ -212,15 +212,15 @@ class AM2315:
         c = self.verify_crc(t)
 
         if (AM2315DEBUG == True):
-            print "AM2315temperature=",self.temperature
-            print "AM2315humdity=",self.humidity
-            print "AM2315crc=",self.crc
-            print "AM2315c=",c
+            print("AM2315temperature=",self.temperature)
+            print("AM2315humdity=",self.humidity)
+            print("AM2315crc=",self.crc)
+            print("AM2315c=",c)
 
         if (self.crc != c) or (c == 0):
         #if self.crc != c:
             if (AM2315DEBUG == True):
-                print "AM2314 BAD CRC"
+                print("AM2314 BAD CRC")
             self.badcrcs = self.badcrcs + 1
             self.crc = -1
         else:
@@ -255,8 +255,8 @@ class AM2315:
 
 if __name__ == "__main__":
     am2315 = AM2315()
-    print am2315.read_temperature()
-    print am2315.read_humidity()
-    print am2315.read_humidity_temperature()
-    print am2315.read_humidity_temperature_crc()
+    print(am2315.read_temperature())
+    print(am2315.read_humidity())
+    print(am2315.read_humidity_temperature())
+    print(am2315.read_humidity_temperature_crc())
     

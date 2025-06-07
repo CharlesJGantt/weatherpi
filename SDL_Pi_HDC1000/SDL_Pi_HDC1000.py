@@ -17,7 +17,7 @@ HDC1000_TEMPERATURE_REGISTER =          (0x00)
 HDC1000_HUMIDITY_REGISTER =             (0x01)
 HDC1000_CONFIGURATION_REGISTER =        (0x02)
 HDC1000_MANUFACTURERID_REGISTER =       (0xFE)
-HDC1000_DEVICEID_REGISTER =        	(0xFF)
+HDC1000_DEVICEID_REGISTER =            (0xFF)
 HDC1000_SERIALIDHIGH_REGISTER =         (0xFB)
 HDC1000_SERIALIDMID_REGISTER =          (0xFC)
 HDC1000_SERIALIDBOTTOM_REGISTER =       (0xFD)
@@ -146,30 +146,30 @@ class SDL_Pi_HDC1000:
                     return False
 
                 return 0
-	
-	def readManufacturerID(self):
+    
+    def readManufacturerID(self):
 
-		data = self._bus.read_i2c_block_data (HDC1000_ADDRESS, HDC1000_MANUFACTURERID_REGISTER  , 2)
-		return data[0] * 256 + data[1]
+        data = self._bus.read_i2c_block_data (HDC1000_ADDRESS, HDC1000_MANUFACTURERID_REGISTER  , 2)
+        return data[0] * 256 + data[1]
 
-	def readDeviceID(self):
+    def readDeviceID(self):
 
-		data = self._bus.read_i2c_block_data (HDC1000_ADDRESS, HDC1000_DEVICEID_REGISTER  , 2)
-		return data[0] * 256 + data[1]
+        data = self._bus.read_i2c_block_data (HDC1000_ADDRESS, HDC1000_DEVICEID_REGISTER  , 2)
+        return data[0] * 256 + data[1]
 
-	def readSerialNumber(self):
+    def readSerialNumber(self):
 
-		serialNumber = 0
+        serialNumber = 0
 
-		data = self._bus.read_i2c_block_data (HDC1000_ADDRESS, HDC1000_SERIALIDHIGH_REGISTER  , 2)
+        data = self._bus.read_i2c_block_data (HDC1000_ADDRESS, HDC1000_SERIALIDHIGH_REGISTER  , 2)
                 serialNumber = data[0]*256+ data[1] 
 
-		data = self._bus.read_i2c_block_data (HDC1000_ADDRESS, HDC1000_SERIALIDMID_REGISTER  , 2)
+        data = self._bus.read_i2c_block_data (HDC1000_ADDRESS, HDC1000_SERIALIDMID_REGISTER  , 2)
                 serialNumber = serialNumber*256 + data[0]*256 + data[1] 
 
-		data = self._bus.read_i2c_block_data (HDC1000_ADDRESS, HDC1000_SERIALIDBOTTOM_REGISTER  , 2)
+        data = self._bus.read_i2c_block_data (HDC1000_ADDRESS, HDC1000_SERIALIDBOTTOM_REGISTER  , 2)
                 serialNumber = serialNumber*256 + data[0]*256 + data[1] 
 
-		return serialNumber
-	
-	
+        return serialNumber
+    
+    

@@ -25,9 +25,9 @@ while (1):
     #print "H,T ", thsen.read_humidity_temperature()
     #print "H,T,C ", thsen.read_humidity_temperature_crc()
     h,t,c = thsen.read_humidity_temperature_crc()
-    print "CRC=0x%02x" % c
+    print("CRC=0x%02x" % c)
    
 
-    print "AM2315 Stats: (g,br,bc,rt,pc)", thsen.read_status_info()
+    print("AM2315 Stats: (g,br,bc,rt,pc)", thsen.read_status_info())
 
     time.sleep(2.0)

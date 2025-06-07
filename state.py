@@ -89,90 +89,90 @@ WXbatteryCharge = 0
 
 def printState():
 
-    print "-------------"
-    print "Current State"
-    print "-------------"
-    print"currentOutsideTemperature = ",currentOutsideTemperature 
-    print"currentOutsideHumidity = ", currentOutsideHumidity 
+    print("-------------")
+    print("Current State")
+    print("-------------")
+    print("currentOutsideTemperature = ",currentOutsideTemperature) 
+    print("currentOutsideHumidity = ", currentOutsideHumidity) 
 
-    print"currentInsideTemperature = ",currentInsideTemperature
-    print"currentInsideHumidity = ",  currentInsideHumidity 
+    print("currentInsideTemperature = ",currentInsideTemperature)
+    print("currentInsideHumidity = ",  currentInsideHumidity) 
 
-    print"currentRain60Minutes = ",  currentRain60Minutes 
+    print("currentRain60Minutes = ",  currentRain60Minutes) 
 
-    print"currentSunlightVisible = ",  currentSunlightVisible 
-    print"currentSunlightIR = ", currentSunlightIR 
-    print"currentSunlightUV = ",  currentSunlightUV 
-    print"currentSunlightUVIndex  = ", currentSunlightUVIndex  
+    print("currentSunlightVisible = ",  currentSunlightVisible) 
+    print("currentSunlightIR = ", currentSunlightIR) 
+    print("currentSunlightUV = ",  currentSunlightUV) 
+    print("currentSunlightUVIndex  = ", currentSunlightUVIndex)  
 
-    print"ScurrentWindSpeed = ", ScurrentWindSpeed
-    print"ScurrentWindGust  = ",  ScurrentWindGust 
-    print"ScurrentWindDirection  = ",  ScurrentWindDirection 
-    print"currentTotalRain  = ", currentTotalRain  
+    print("ScurrentWindSpeed = ", ScurrentWindSpeed)
+    print("ScurrentWindGust  = ",  ScurrentWindGust) 
+    print("ScurrentWindDirection  = ",  ScurrentWindDirection) 
+    print("currentTotalRain  = ", currentTotalRain)  
 
-    print "currentBarometricPressure = ", currentBarometricPressure 
-    print "currentAltitude = ", currentAltitude 
-    print "currentSeaLevel = ", currentSeaLevel 
-    print "barometricTrend =",barometricTrend 
-    print "pastBarometricReading = ", pastBarometricReading 
+    print("currentBarometricPressure = ", currentBarometricPressure) 
+    print("currentAltitude = ", currentAltitude) 
+    print("currentSeaLevel = ", currentSeaLevel) 
+    print("barometricTrend =",barometricTrend) 
+    print("pastBarometricReading = ", pastBarometricReading) 
 
-    print "AirQuality_Sensor_Value = ",  AirQuality_Sensor_Value 
+    print("AirQuality_Sensor_Value = ",  AirQuality_Sensor_Value) 
 
-    print "-------------"
+    print("-------------")
 
 
-    print "currentAs3935Interrupt = ", currentAs3935Interrupt 
+    print("currentAs3935Interrupt = ", currentAs3935Interrupt) 
 
-    print "currentAs3935LastInterrupt = ", currentAs3935LastInterrupt 
-    print "currentAs3935LastDistance = ",  currentAs3935LastDistance 
-    print "currentAs3935LastStatus = ", currentAs3935LastStatus 
+    print("currentAs3935LastInterrupt = ", currentAs3935LastInterrupt) 
+    print("currentAs3935LastDistance = ",  currentAs3935LastDistance) 
+    print("currentAs3935LastStatus = ", currentAs3935LastStatus) 
     
-    print "currentAs3935LastLightningTimeStamp = ", currentAs3935LastLightningTimeStamp 
+    print("currentAs3935LastLightningTimeStamp = ", currentAs3935LastLightningTimeStamp) 
 
 
     
-    print "-------------"
+    print("-------------")
 
 
-    print "runRainbow = ", runRainbow 
-    print "flashStrip = ", flashStrip 
-    print "runOLED =", runOLED 
-    print "-------------"
+    print("runRainbow = ", runRainbow) 
+    print("flashStrip = ", flashStrip) 
+    print("runOLED =", runOLED) 
+    print("-------------")
 
 
 
-    print "Last_Event = ", Last_Event 
-    print "EnglishMetric = ", EnglishMetric 
+    print("Last_Event = ", Last_Event) 
+    print("EnglishMetric = ", EnglishMetric) 
     
     
-    print "-------------"
+    print("-------------")
 
-    print "batteryVoltage", batteryVoltage 
-    print "batteryCurrent", batteryCurrent
-    print "solarVoltage", solarVoltage 
-    print "solarCurrent", solarCurrent
-    print "loadVoltage", loadVoltage
-    print "loadCurrent", loadCurrent
-    print "batteryPower", batteryPower
-    print "solarPower", solarPower
-    print "loadPower", loadPower
-    print "batteryCharge", batteryCharge
+    print("batteryVoltage", batteryVoltage) 
+    print("batteryCurrent", batteryCurrent)
+    print("solarVoltage", solarVoltage) 
+    print("solarCurrent", solarCurrent)
+    print("loadVoltage", loadVoltage)
+    print("loadCurrent", loadCurrent)
+    print("batteryPower", batteryPower)
+    print("solarPower", solarPower)
+    print("loadPower", loadPower)
+    print("batteryCharge", batteryCharge)
 
-    print "-------------"
+    print("-------------")
 
-    print "-------------"
+    print("-------------")
 
-    print "WXbatteryVoltage", WXbatteryVoltage 
-    print "WXbatteryCurrent", WXbatteryCurrent
-    print "WXsolarVoltage", WXsolarVoltage 
-    print "WXsolarCurrent", WXsolarCurrent
-    print "WXloadVoltage", WXloadVoltage
-    print "WXloadCurrent", WXloadCurrent
-    print "WXbatteryPower", WXbatteryPower
-    print "WXsolarPower", WXsolarPower
-    print "WXloadPower", WXloadPower
-    print "WXbatteryCharge", WXbatteryCharge
+    print("WXbatteryVoltage", WXbatteryVoltage) 
+    print("WXbatteryCurrent", WXbatteryCurrent)
+    print("WXsolarVoltage", WXsolarVoltage) 
+    print("WXsolarCurrent", WXsolarCurrent)
+    print("WXloadVoltage", WXloadVoltage)
+    print("WXloadCurrent", WXloadCurrent)
+    print("WXbatteryPower", WXbatteryPower)
+    print("WXsolarPower", WXsolarPower)
+    print("WXloadPower", WXloadPower)
+    print("WXbatteryCharge", WXbatteryCharge)
 
-    print "-------------"
+    print("-------------")
 
 

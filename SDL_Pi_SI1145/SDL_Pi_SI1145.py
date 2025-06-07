@@ -258,24 +258,24 @@ class SDL_Pi_SI1145(object):
                 self._device.write_byte_data(SI1145_ADDR,SI1145_REG_COMMAND, SI1145_PSALS_AUTO)
 
         # returns the UV index * 100 (divide by 100 to get the index)
-	# apply additional calibration of /10 based on sunlight
+    # apply additional calibration of /10 based on sunlight
         def readUV(self):
                 data = self._device.read_i2c_block_data(SI1145_ADDR,0x2C,2)
-		return (data[1] * 256 + data[0])/10
+        return (data[1] * 256 + data[0])/10
 
         #returns visible + IR light levels
         def readVisible(self):
                 data =  self._device.read_i2c_block_data(SI1145_ADDR,0x22,2)
-                print "data =", data
-		return data[1] * 256 + data[0]
+                print("data =", data)
+        return data[1] * 256 + data[0]
 
         #returns IR light levels
         def readIR(self):
                 data = self._device.read_i2c_block_data(SI1145_ADDR,0x24,2)
-		return data[1] * 256 + data[0]
+        return data[1] * 256 + data[0]
 
         # Returns "Proximity" - assumes an IR LED is attached to LED
         def readProx(self):
                 data = self._device.read_i2c_block_data(SI1145_ADDR,0x26,2)
-		return data[1] * 256 + data[0]
+        return data[1] * 256 + data[0]
 
