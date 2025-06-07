@@ -22,11 +22,11 @@
 # THE SOFTWARE.
 
 # Can enable debug output by uncommenting:
-#import logging
-#logging.basicConfig(level=logging.DEBUG)
+# import logging
+# logging.basicConfig(level=logging.DEBUG)
 
 import time
-import SDL_Pi_SI1145 
+import SDL_Pi_SI1145
 import SI1145Lux
 
 # Default constructor will pick a default I2C bus.

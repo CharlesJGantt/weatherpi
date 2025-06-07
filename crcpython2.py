@@ -49,7 +49,8 @@ class CRCCCITT(object):
             for c in input_data:
                 d = ord(c) if is_string else c
                 tmp = ((crc_value >> 8) & 0xff) ^ d
-                crc_value = ((crc_value << 8) & 0xff00) ^ self.crc_ccitt_table[tmp]
+                crc_value = (
+                    (crc_value << 8) & 0xff00) ^ self.crc_ccitt_table[tmp]
 
             return crc_value
         except Exception as e:

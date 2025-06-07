@@ -36,5 +36,6 @@ class MockGPIO(GPIO.BaseGPIO):
 
     def input(self, pin):
         if pin not in self.pin_read:
-            raise RuntimeError('No mock GPIO data to read for pin {0}'.format(pin))
+            raise RuntimeError(
+                'No mock GPIO data to read for pin {0}'.format(pin))
         return self.pin_read[pin].pop(0) == 1

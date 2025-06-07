@@ -9,4 +9,3 @@ print(updateBlynk.blynkSGSAppOnline())
 print(updateBlynk.blynkInit())
 
 print(updateBlynk.blynkStatusUpdate())
-

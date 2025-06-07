@@ -47,7 +47,7 @@ SPI_DEVICE = 0
 disp = Adafruit_SSD1306.SSD1306_128_32(rst=RST)
 
 # 128x64 display with hardware I2C:
-#disp = Adafruit_SSD1306.SSD1306_128_64(rst=RST)
+# disp = Adafruit_SSD1306.SSD1306_128_64(rst=RST)
 
 
 # Note you can change the I2C address by passing an i2c_address parameter like:
@@ -89,8 +89,8 @@ text = 'SSD1306 ORGANIC LED DISPLAY. THIS IS AN OLD SCHOOL DEMO SCROLLER!! GREET
 maxwidth, unused = draw.textsize(text, font=font)
 
 # Set animation and sine wave parameters.
-amplitude = height/4
-offset = height/2 - 4
+amplitude = height / 4
+offset = height / 2 - 4
 velocity = -2
 startpos = width
 
@@ -99,8 +99,9 @@ print('Press Ctrl-C to quit.')
 pos = startpos
 while True:
     # Clear image buffer by drawing a black filled box.
-    draw.rectangle((0,0,width,height), outline=0, fill=0)
-    # Enumerate characters and draw them offset vertically based on a sine wave.
+    draw.rectangle((0, 0, width, height), outline=0, fill=0)
+    # Enumerate characters and draw them offset vertically based on a sine
+    # wave.
     x = pos
     for i, c in enumerate(text):
         # Stop drawing if off the right side of screen.
@@ -112,7 +113,8 @@ while True:
             x += char_width
             continue
         # Calculate offset from sine wave.
-        y = offset+math.floor(amplitude*math.sin(x/float(width)*2.0*math.pi))
+        y = offset + math.floor(amplitude *
+                                math.sin(x / float(width) * 2.0 * math.pi))
         # Draw text.
         draw.text((x, y), c, font=font, fill=255)
         # Increment x position based on chacacter width.

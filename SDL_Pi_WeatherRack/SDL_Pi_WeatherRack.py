@@ -5,16 +5,19 @@
 #
 #  SparkFun Weather Station Meters
 #  Argent Data Systems
-#  Created by SwitchDoc Labs February 13, 2015 
+#  Created by SwitchDoc Labs February 13, 2015
 #  Released into the public domain.
 #    Version 1.3 - remove 300ms Bounce
 #    Version 2.0 - Update for WeatherPiArduino V2
 #    Version 3.0 - Removed Double Interrupts
-#    
+#
 
 # imports
 
 try:
+from datetime import *
+import RPi.GPIO as GPIO
+from SDL_Adafruit_ADS1x15 import ADS1x15
     # Check for user imports
     try:
             import conflocal as config
@@ -23,21 +26,15 @@ try:
 
 
 except:
-    import NoWPAConfig.py as config    
+    import NoWPAConfig.py as config
 
 import sys
 import time as time_
 
 sys.path.append('./SDL_Adafruit_ADS1x15')
 
-from SDL_Adafruit_ADS1x15 import ADS1x15
-
-import RPi.GPIO as GPIO
-
 
 GPIO.setwarnings(False)
-
-from datetime import *
 
 
 # constants
@@ -45,9 +42,10 @@ from datetime import *
 SDL_MODE_INTERNAL_AD = 0
 SDL_MODE_I2C_ADS1015 = 1
 
-#sample mode means return immediately.  THe wind speed is averaged at sampleTime or when you ask, whichever is longer
+# sample mode means return immediately.  THe wind speed is averaged at
+# sampleTime or when you ask, whichever is longer
 SDL_MODE_SAMPLE = 0
-#Delay mode means to wait for sampleTime and the average after that time.
+# Delay mode means to wait for sampleTime and the average after that time.
 SDL_MODE_DELAY = 1
 
 # Number of Interupts per Rain Bucket and Anemometer Clicks
@@ -61,21 +59,24 @@ WIND_FACTOR = 2.400 / SDL_INTERRUPT_CLICKS
 
 
 def fuzzyCompare(compareValue, value):
-    
+
     VARYVALUE = 0.05
 
-       if ( (value > (compareValue * (1.0-VARYVALUE)))  and (value < (compareValue *(1.0+VARYVALUE))) ):
+       if ((value > (compareValue * (1.0 - VARYVALUE)))
+           and (value < (compareValue * (1.0 + VARYVALUE)))):
              return True
-        
+
     return False
- 
+
+
 def voltageToDegrees(value, defaultWindDirection):
-        # Note:  The original documentation for the wind vane says 16 positions.  Typically only recieve 8 positions.  And 315 degrees was wrong.
-     
+        # Note:  The original documentation for the wind vane says 16
+        # positions.  Typically only recieve 8 positions.  And 315 degrees was
+        # wrong.
+
         # For 5V, use 1.0.  For 3.3V use 0.66
     ADJUST3OR5 = 1.0
     PowerVoltage = 5.0
-
 
     if (fuzzyCompare(3.84 * ADJUST3OR5, value)):
             return 0.0
@@ -85,10 +86,10 @@ def voltageToDegrees(value, defaultWindDirection):
 
     if (fuzzyCompare(2.25 * ADJUST3OR5, value)):
         return 45
-                  
+
     if (fuzzyCompare(0.41 * ADJUST3OR5, value)):
         return 67.5
-                      
+
     if (fuzzyCompare(0.45 * ADJUST3OR5, value)):
         return 90.0
 
@@ -115,33 +116,32 @@ def voltageToDegrees(value, defaultWindDirection):
 
     if (fuzzyCompare(4.62 * ADJUST3OR5, value)):
         return 270.0
-    
+
     if (fuzzyCompare(4.04 * ADJUST3OR5, value)):
         return 292.5
 
-    if (fuzzyCompare(4.34 * ADJUST3OR5, value)): # chart in manufacturers documentation wrong
+    if (fuzzyCompare(4.34 * ADJUST3OR5, value)
+        ):  # chart in manufacturers documentation wrong
         return 315.0
-    
+
     if (fuzzyCompare(3.43 * ADJUST3OR5, value)):
         return 337.5
-    
+
     return defaultWindDirection  # return previous value if not found
 
 # return current microseconds
+
+
 def micros():
 
     microseconds = int(round(time_.time() * 1000000))
     return microseconds
 
 
-
-
 class SDL_Pi_WeatherRack:
-
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-
 
     # instance variables
     _currentWindCount = 0

@@ -8,11 +8,15 @@ setup(
     author_email='phillip.fenstermacher@gmail.com',
     url='https://github.com/pcfens/RaspberryPi-AS3935',
     packages=['RPi_AS3935'],
-    keywords=['RaspberryPi', 'AS3935', 'lightning', 'weather'],
+    keywords=[
+        'RaspberryPi',
+        'AS3935',
+        'lightning',
+        'weather'],
     license='Apache-2.0',
     classifiers=[
-        'Development Status :: 4 - Beta',
-        'License :: OSI Approved :: Apache Software License',
-        'Topic :: Utilities',
+            'Development Status :: 4 - Beta',
+            'License :: OSI Approved :: Apache Software License',
+            'Topic :: Utilities',
     ],
 )

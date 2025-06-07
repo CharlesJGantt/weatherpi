@@ -26,17 +26,20 @@ import Adafruit_GPIO.Platform as Platform
 
 
 class TestPlatformDetect(unittest.TestCase):
-    @patch('platform.platform', Mock(return_value='Linux-3.10.25+-armv6l-with-debian-7.4'))
+    @patch('platform.platform',
+           Mock(return_value='Linux-3.10.25+-armv6l-with-debian-7.4'))
     def test_raspberry_pi(self):
         result = Platform.platform_detect()
         self.assertEqual(result, Platform.RASPBERRY_PI)
 
-    @patch('platform.platform', Mock(return_value='Linux-3.8.13-bone47-armv7l-with-debian-7.4'))
+    @patch('platform.platform',
+           Mock(return_value='Linux-3.8.13-bone47-armv7l-with-debian-7.4'))
     def test_beaglebone_black(self):
         result = Platform.platform_detect()
         self.assertEqual(result, Platform.BEAGLEBONE_BLACK)
 
-    @patch('platform.platform', Mock(return_value='Darwin-13.2.0-x86_64-i386-64bit'))
+    @patch('platform.platform',
+           Mock(return_value='Darwin-13.2.0-x86_64-i386-64bit'))
     def test_unknown(self):
         result = Platform.platform_detect()
         self.assertEqual(result, Platform.UNKNOWN)
@@ -72,4 +75,3 @@ class TestPiRevision(unittest.TestCase):
             handle = mock_open.return_value.__enter__.return_value
             handle.__iter__.return_value = iter(['foobar'])
             self.assertRaises(RuntimeError, Platform.pi_revision)
-

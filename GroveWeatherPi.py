@@ -10,30 +10,43 @@
 
 # imports
 
+import random
+import WeatherUnderground
+import Scroll_SSD1306
+import Adafruit_SSD1306
+import SDL_Pi_TCA9545
+from RPi_AS3935 import RPi_AS3935
+import SDL_Pi_FRAM
+import SDL_Pi_WeatherRack as SDL_Pi_WeatherRack
+import Adafruit_BMP.BMP280 as BMP280
+import SDL_DS3231
+import SDL_Pi_INA3221
+import apscheduler.events
+from apscheduler.schedulers.background import BackgroundScheduler
+import SDL_Pi_HDC1000
+import struct
+import smbus
+import doAllGraphs
+import RPi.GPIO as GPIO
+import state
+import updateBlynk
+import pclogging
+import logging
+import sendemail
+import subprocess
+import threading
+import os
+import math
+import re
+from datetime import datetime
+import time
+import sys
 GWPVERSION = "3.17"
 GWPDEBUG = False
 
 
-import sys
-import time
-from datetime import datetime
-import random 
-import re
-import math
-import os
-import threading
-
-import subprocess
-
-import sendemail
-import logging
 logging.basicConfig()
 
-import pclogging
-
-import updateBlynk
-
-import state
 
 sys.path.append('./SDL_Pi_SSD1306')
 sys.path.append('./Adafruit_Python_SSD1306')
@@ -51,21 +64,6 @@ sys.path.append('./SDL_Pi_HDC1000')
 sys.path.append('./SDL_Pi_AM2315')
 
 
-import subprocess
-import RPi.GPIO as GPIO
-import doAllGraphs
-import smbus
-
-import struct
-
-import SDL_Pi_HDC1000
-
-
-from apscheduler.schedulers.background import BackgroundScheduler
-
-import apscheduler.events
-
-
 # Check for user imports
 try:
     import conflocal as config
@@ -80,10 +78,11 @@ if (config.enable_MySQL_Logging == True):
 # Device Present State Variables
 ###############
 
-#indicate interrupt has happened from as3936
+# indicate interrupt has happened from as3936
 
 as3935_Interrupt_Happened = False;
-# set to true if you are building the Weather Board project with Lightning Sensor
+# set to true if you are building the Weather Board project with Lightning
+# Sensor
 config.Lightning_Mode = True
 
 # set to true if you are building the solar powered version
@@ -109,28 +108,11 @@ config.WXLink_Data_Fresh = False
 config.WXLink_LastMessageID = 0
 
 
-import SDL_Pi_INA3221
-import SDL_DS3231
-import Adafruit_BMP.BMP280 as BMP280
-import SDL_Pi_WeatherRack as SDL_Pi_WeatherRack
-
-import SDL_Pi_FRAM
-from RPi_AS3935 import RPi_AS3935
-
-import SDL_Pi_TCA9545
-
-import Adafruit_SSD1306
-
-import Scroll_SSD1306
-
-import WeatherUnderground
-
 try:
     import SDL_Pi_SI1145
     import SI1145Lux
 except:
     print("Bad SI1145 Installation")
-
 
 
 def returnStatusLine(device, state):
@@ -149,38 +131,38 @@ I2C_Lock = threading.Lock()
 
 
 ################
-# TCA9545 I2C Mux 
+# TCA9545 I2C Mux
 
-#/*=========================================================================
+# /*=========================================================================
 #    I2C ADDRESS/BITS
 #    -----------------------------------------------------------------------*/
-TCA9545_ADDRESS =                         (0x73)    # 1110011 (A0+A1=VDD)
-#/*=========================================================================*/
+TCA9545_ADDRESS = (0x73)    # 1110011 (A0+A1=VDD)
+# /*=========================================================================*/
 
-#/*=========================================================================
+# /*=========================================================================
 #    CONFIG REGISTER (R/W)
 #    -----------------------------------------------------------------------*/
-TCA9545_REG_CONFIG            =          (0x00)
+TCA9545_REG_CONFIG = (0x00)
 #    /*---------------------------------------------------------------------*/
 
-TCA9545_CONFIG_BUS0  =                (0x01)  # 1 = enable, 0 = disable 
-TCA9545_CONFIG_BUS1  =                (0x02)  # 1 = enable, 0 = disable 
-TCA9545_CONFIG_BUS2  =                (0x04)  # 1 = enable, 0 = disable 
-TCA9545_CONFIG_BUS3  =                (0x08)  # 1 = enable, 0 = disable 
+TCA9545_CONFIG_BUS0 = (0x01)  # 1 = enable, 0 = disable
+TCA9545_CONFIG_BUS1 = (0x02)  # 1 = enable, 0 = disable
+TCA9545_CONFIG_BUS2 = (0x04)  # 1 = enable, 0 = disable
+TCA9545_CONFIG_BUS3 = (0x08)  # 1 = enable, 0 = disable
 
-#/*=========================================================================*/
+# /*=========================================================================*/
 
 # I2C Mux TCA9545 Detection
 try:
-    tca9545 = SDL_Pi_TCA9545.SDL_Pi_TCA9545(addr=TCA9545_ADDRESS, bus_enable = TCA9545_CONFIG_BUS0)
-
+    tca9545 = SDL_Pi_TCA9545.SDL_Pi_TCA9545(
+        addr=TCA9545_ADDRESS, bus_enable=TCA9545_CONFIG_BUS0)
 
     # turn I2CBus 1 on
     tca9545.write_control_register(TCA9545_CONFIG_BUS2)
     config.TCA9545_I2CMux_Present = True
 except:
     print(">>>>>>>>>>>>>>>>>>><<<<<<<<<<<")
-    print("TCA9545 I2C Mux Not Present") 
+    print("TCA9545 I2C Mux Not Present")
     print(">>>>>>>>>>>>>>>>>>><<<<<<<<<<<")
     config.TCA9545_I2CMux_Present = False
 
@@ -188,27 +170,26 @@ except:
 # SunAirPlus Sensors
 
 
-# the three channels of the INA3221 named for SunAirPlus Solar Power Controller channels (www.switchdoc.com)
+# the three channels of the INA3221 named for SunAirPlus Solar Power
+# Controller channels (www.switchdoc.com)
 LIPO_BATTERY_CHANNEL = 1
-SOLAR_CELL_CHANNEL   = 2
-OUTPUT_CHANNEL       = 3
+SOLAR_CELL_CHANNEL = 2
+OUTPUT_CHANNEL = 3
 
 try:
-    if (config.TCA9545_I2CMux_Present):
-             # switch to BUS2 -  SunAirPlus is on Bus2
-             tca9545.write_control_register(TCA9545_CONFIG_BUS2)
-        
+    if config.TCA9545_I2CMux_Present:
+        # switch to BUS2 -  SunAirPlus is on Bus2
+        tca9545.write_control_register(TCA9545_CONFIG_BUS2)
+
     sunAirPlus = SDL_Pi_INA3221.SDL_Pi_INA3221(addr=0x40)
 
-        busvoltage1 = sunAirPlus.getBusVoltage_V(LIPO_BATTERY_CHANNEL)
-        config.SunAirPlus_Present = True
-except:
-        config.SunAirPlus_Present = False
-
+    busvoltage1 = sunAirPlus.getBusVoltage_V(LIPO_BATTERY_CHANNEL)
+    config.SunAirPlus_Present = True
+except Exception:
+    config.SunAirPlus_Present = False
 
 
 SUNAIRLED = 25
-
 
 
 ################
@@ -220,37 +201,35 @@ if (config.TCA9545_I2CMux_Present):
 
 
 ###############
-
 # HDC1080 Detection
 try:
-    hdc1080 = SDL_Pi_HDC1000.SDL_Pi_HDC1000() 
-        deviceID = hdc1080.readDeviceID() 
+    hdc1080 = SDL_Pi_HDC1000.SDL_Pi_HDC1000()
+    deviceID = hdc1080.readDeviceID()
     print("deviceID = 0x%X" % deviceID)
-    if (deviceID == 0x1050):
-            config.HDC1080_Present = True
+    if deviceID == 0x1050:
+        config.HDC1080_Present = True
     else:
         config.HDC1080_Present = False
-except:
-        config.HDC1080_Present = False
+except Exception:
+    config.HDC1080_Present = False
 
 
 ###############
 
 # HTU21DF Detection
 
-if (config.HDC1080_Present == True):
+if config.HDC1080_Present == True:
     config.HTU21DF_Present = False
 else:
     try:
-        HTU21DFOut = subprocess.check_output(["htu21dflib/htu21dflib","-l"])
-            config.HTU21DF_Present = True
-    except:
-            config.HTU21DF_Present = False
-
+        HTU21DFOut = subprocess.check_output(["htu21dflib/htu21dflib", "-l"])
+        config.HTU21DF_Present = True
+    except Exception:
+        config.HTU21DF_Present = False
 
 ###############
 
-#WeatherRack Weather Sensors
+# WeatherRack Weather Sensors
 #
 # GPIO Numbering Mode GPIO.BCM
 #
@@ -261,21 +240,23 @@ rainPin = 21
 # constants
 
 SDL_MODE_INTERNAL_AD = 0
-SDL_MODE_I2C_ADS1015 = 1    # internally, the library checks for ADS1115 or ADS1015 if found
+# internally, the library checks for ADS1115 or ADS1015 if found
+SDL_MODE_I2C_ADS1015 = 1
 
-#sample mode means return immediately.  THe wind speed is averaged at sampleTime or when you ask, whichever is longer
+# sample mode means return immediately.  THe wind speed is averaged at
+# sampleTime or when you ask, whichever is longer
 SDL_MODE_SAMPLE = 0
-#Delay mode means to wait for sampleTime and the average after that time.
+# Delay mode means to wait for sampleTime and the average after that time.
 SDL_MODE_DELAY = 1
 
 # turn I2CBus 0 on
 if (config.TCA9545_I2CMux_Present):
     tca9545.write_control_register(TCA9545_CONFIG_BUS0)
-weatherStation = SDL_Pi_WeatherRack.SDL_Pi_WeatherRack(anemometerPin, rainPin, 0,0, SDL_MODE_I2C_ADS1015)
+weatherStation = SDL_Pi_WeatherRack.SDL_Pi_WeatherRack(
+    anemometerPin, rainPin, 0, 0, SDL_MODE_I2C_ADS1015)
 
 weatherStation.setWindMode(SDL_MODE_SAMPLE, 5.0)
-#weatherStation.setWindMode(SDL_MODE_DELAY, 5.0)
-
+# weatherStation.setWindMode(SDL_MODE_DELAY, 5.0)
 
 
 ################
@@ -283,30 +264,29 @@ weatherStation.setWindMode(SDL_MODE_SAMPLE, 5.0)
 # WXLink Test Setup
 WXLinkResetPin = 12
 
-def resetWXLink():
-    
-    print("WXLink Reset")
-        pclogging.log(pclogging.INFO, __name__, "WXLink RX Reset" )
-    # Reset is connected to D12 on the Pi2Grover    
-        
-        GPIO.setup(WXLinkResetPin, GPIO.OUT)
-        GPIO.output(WXLinkResetPin, False)
-        time.sleep(0.2)
-        GPIO.output(WXLinkResetPin, True)
-        GPIO.setup(WXLinkResetPin, GPIO.IN)
-     time.sleep(2.0)        
 
-#resetWXLink()
+def resetWXLink():
+    print("WXLink Reset")
+    pclogging.log(pclogging.INFO, __name__, "WXLink RX Reset")
+    # Reset is connected to D12 on the Pi2Grover
+    GPIO.setup(WXLinkResetPin, GPIO.OUT)
+    GPIO.output(WXLinkResetPin, False)
+    time.sleep(0.2)
+    GPIO.output(WXLinkResetPin, True)
+    GPIO.setup(WXLinkResetPin, GPIO.IN)
+    time.sleep(2.0)
+# resetWXLink()
+
 
 WXLink = smbus.SMBus(1)
 try:
-        data1 = WXLink.read_i2c_block_data(0x08, 0)
-        config.WXLink_Present = True
+    data1 = WXLink.read_i2c_block_data(0x08, 0)
+    config.WXLink_Present = True
 
     # OK, now export i2c to so we can determine if we need to reset WXLink
-       os.system("echo '3' > /sys/class/gpio/export")
-except:
-        config.WXLink_Present = False
+    os.system("echo 3 > /sys/class/gpio/export")
+except Exception:
+    config.WXLink_Present = False
 
 block1 = ""
 block2 = ""
@@ -318,31 +298,29 @@ block2 = ""
 
 ################
 # turn I2CBus 3 on
-if (config.TCA9545_I2CMux_Present):
-     tca9545.write_control_register(TCA9545_CONFIG_BUS3)
+if config.TCA9545_I2CMux_Present:
+    tca9545.write_control_register(TCA9545_CONFIG_BUS3)
 
 try:
     Sunlight_Sensor = SDL_Pi_SI1145.SDL_Pi_SI1145()
-        visible = Sunlight_Sensor.readVisible() 
+    visible = Sunlight_Sensor.readVisible()
     print("visible=", visible)
-        config.Sunlight_Present = True
-        vis = Sunlight_Sensor.readVisible()
-           IR = Sunlight_Sensor.readIR()
-           UV = Sunlight_Sensor.readUV()
-           IR_Lux = SI1145Lux.SI1145_IR_to_Lux(IR)
-           vis_Lux = SI1145Lux.SI1145_VIS_to_Lux(vis)
-           uvIndex = UV / 100.0
-
-
-except:
-        config.Sunlight_Present = False
+    config.Sunlight_Present = True
+    vis = Sunlight_Sensor.readVisible()
+    IR = Sunlight_Sensor.readIR()
+    UV = Sunlight_Sensor.readUV()
+    IR_Lux = SI1145Lux.SI1145_IR_to_Lux(IR)
+    vis_Lux = SI1145Lux.SI1145_VIS_to_Lux(vis)
+    uvIndex = UV / 100.0
+except Exception:
+    config.Sunlight_Present = False
 
 
 ################
 # DS3231/AT24C32 Setup
 # turn I2CBus 0 on
-if (config.TCA9545_I2CMux_Present):
-         tca9545.write_control_register(TCA9545_CONFIG_BUS0)
+if config.TCA9545_I2CMux_Present:
+    tca9545.write_control_register(TCA9545_CONFIG_BUS0)
 
 filename = time.strftime("%Y-%m-%d%H:%M:%SRTCTest") + ".txt"
 starttime = datetime.utcnow()
@@ -352,36 +330,34 @@ ds3231 = SDL_DS3231.SDL_DS3231(1, 0x68)
 
 try:
 
-        
         ds3231.write_now()
         ds3231.read_datetime()
-        #print "DS3231=\t\t%s" % ds3231.read_datetime()
+        # print "DS3231=\t\t%s" % ds3231.read_datetime()
         config.DS3231_Present = True
-        #print "----------------- "
-        #print "----------------- "
-        #print " AT24C32 EEPROM"
-        #print "----------------- "
-        #print "writing first 4 addresses with random data"
-        for x in range(0,4):
-                value = random.randint(0,255)
-            #print "address = %i writing value=%i" % (x, value)
+        # print "----------------- "
+        # print "----------------- "
+        # print " AT24C32 EEPROM"
+        # print "----------------- "
+        # print "writing first 4 addresses with random data"
+        for x in range(0, 4):
+                value = random.randint(0, 255)
+            # print "address = %i writing value=%i" % (x, value)
                 ds3231.write_AT24C32_byte(x, value)
-        #print "----------------- "
+        # print "----------------- "
 
-        #print "reading first 4 addresses"
-        #for x in range(0,4):
+        # print "reading first 4 addresses"
+        # for x in range(0,4):
         #        print "address = %i value = %i" %(x, ds3231.read_AT24C32_byte(x))
-        #print "----------------- "
+        # print "----------------- "
 
 except IOError as e:
-        #print "I/O error({0}): {1}".format(e.errno, e.strerror)
+        # print "I/O error({0}): {1}".format(e.errno, e.strerror)
         config.DS3231_Present = False
-
 
 
 ################
 
-# BMP280 Setup 
+# BMP280 Setup
 
 try:
         bmp280 = BMP280.BMP280()
@@ -397,7 +373,7 @@ except IOError as e:
 # OLED SSD_1306 Detection
 
 try:
-        RST =27
+        RST = 27
         display = Adafruit_SSD1306.SSD1306_128_64(rst=RST, i2c_address=0x3C)
         # Initialize library.
         display.begin()
@@ -409,9 +385,10 @@ except:
         config.OLED_Originally_Present = False
         config.OLED_Present = False
 
+
 def initializeOLED():
     try:
-        RST =27
+        RST = 27
         display = Adafruit_SSD1306.SSD1306_128_64(rst=RST, i2c_address=0x3C)
         # Initialize library.
         display.begin()
@@ -422,8 +399,6 @@ def initializeOLED():
     except:
         config.OLED_Originally_Present = False
         config.OLED_Present = False
-
-
 
 
 ################
@@ -442,7 +417,7 @@ def process_as3935_interrupt():
     reason = as3935.get_interrupt()
 
     as3935LastInterrupt = reason
-    
+
     if reason == 0x00:
     as3935LastStatus = "Spurious Interrupt"
         if (config.USEBLYNK):
@@ -450,37 +425,44 @@ def process_as3935_interrupt():
     elif reason == 0x01:
     as3935LastStatus = "Noise Floor too low. Adjusting"
         if (config.USEBLYNK):
-            updateBlynk.blynkStatusTerminalUpdate("AS3935: Noise Floor too low - adjusted")
+            updateBlynk.blynkStatusTerminalUpdate(
+                "AS3935: Noise Floor too low - adjusted")
         as3935.raise_noise_floor()
     elif reason == 0x04:
     as3935LastStatus = "Disturber detected - masking"
         if (config.USEBLYNK):
-            updateBlynk.blynkStatusTerminalUpdate("AS3935: Disturber detected - masking")
+            updateBlynk.blynkStatusTerminalUpdate(
+                "AS3935: Disturber detected - masking")
         as3935.set_mask_disturber(True)
     elif reason == 0x08:
         now = datetime.now().strftime('%H:%M:%S - %Y/%m/%d')
         distance = as3935.get_distance()
     as3935LastDistance = distance
-    as3935LastStatus = "Lightning Detected "  + str(distance) + "km away. (%s)" % now
+    as3935LastStatus = "Lightning Detected " + \
+        str(distance) + "km away. (%s)" % now
         if (config.USEBLYNK):
-            updateBlynk.blynkEventUpdate("Lightning Detected "  + str(distance) + "km away.")
-            updateBlynk.blynkStatusTerminalUpdate("Lightning Detected "  + str(distance) + "km away.")
+            updateBlynk.blynkEventUpdate(
+                "Lightning Detected " + str(distance) + "km away.")
+            updateBlynk.blynkStatusTerminalUpdate(
+                "Lightning Detected " + str(distance) + "km away.")
 
-    pclogging.log(pclogging.INFO, __name__, "Lightning Detected "  + str(distance) + "km away. (%s)" % now)
-    sendemail.sendEmail("test", "GroveWeatherPi Lightning Detected\n", as3935LastStatus, config.textnotifyAddress,  config.fromAddress, "");
+    pclogging.log(pclogging.INFO, __name__, "Lightning Detected " +
+                  str(distance) + "km away. (%s)" % now)
+    sendemail.sendEmail("test", "GroveWeatherPi Lightning Detected\n",
+                        as3935LastStatus, config.textnotifyAddress, config.fromAddress, "");
         # now set LED parameters
         state.currentAs3935LastLightningTimeStamp = time.time()
-    
-    state.currentAs3935LastDistance = as3935LastDistance 
-    state.currentAs3935LastStatus = as3935LastStatus 
-    state.currentAs3935Interrupt = as3935LastInterrupt 
-    
-    print("Last Interrupt = 0x%x:  %s" % (as3935LastInterrupt, as3935LastStatus))
+
+    state.currentAs3935LastDistance = as3935LastDistance
+    state.currentAs3935LastStatus = as3935LastStatus
+    state.currentAs3935Interrupt = as3935LastInterrupt
+
+    print("Last Interrupt = 0x%x:  %s" %
+          (as3935LastInterrupt, as3935LastStatus))
     if (config.TCA9545_I2CMux_Present):
          tca9545.write_control_register(TCA9545_CONFIG_BUS0)
 
     time.sleep(0.003)
-
 
 
 # ad3935 Set up Lightning Detector

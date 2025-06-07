@@ -23,41 +23,51 @@ import time
 
 
 # BMP085 default address.
-BMP085_I2CADDR           = 0x77
+BMP085_I2CADDR = 0x77
 
 # Operating Modes
-BMP085_ULTRALOWPOWER     = 0
-BMP085_STANDARD          = 1
-BMP085_HIGHRES           = 2
-BMP085_ULTRAHIGHRES      = 3
+BMP085_ULTRALOWPOWER = 0
+BMP085_STANDARD = 1
+BMP085_HIGHRES = 2
+BMP085_ULTRAHIGHRES = 3
 
 # BMP085 Registers
-BMP085_CAL_AC1           = 0xAA  # R   Calibration data (16 bits)
-BMP085_CAL_AC2           = 0xAC  # R   Calibration data (16 bits)
-BMP085_CAL_AC3           = 0xAE  # R   Calibration data (16 bits)
-BMP085_CAL_AC4           = 0xB0  # R   Calibration data (16 bits)
-BMP085_CAL_AC5           = 0xB2  # R   Calibration data (16 bits)
-BMP085_CAL_AC6           = 0xB4  # R   Calibration data (16 bits)
-BMP085_CAL_B1            = 0xB6  # R   Calibration data (16 bits)
-BMP085_CAL_B2            = 0xB8  # R   Calibration data (16 bits)
-BMP085_CAL_MB            = 0xBA  # R   Calibration data (16 bits)
-BMP085_CAL_MC            = 0xBC  # R   Calibration data (16 bits)
-BMP085_CAL_MD            = 0xBE  # R   Calibration data (16 bits)
-BMP085_CONTROL           = 0xF4
-BMP085_TEMPDATA          = 0xF6
-BMP085_PRESSUREDATA      = 0xF6
+BMP085_CAL_AC1 = 0xAA  # R   Calibration data (16 bits)
+BMP085_CAL_AC2 = 0xAC  # R   Calibration data (16 bits)
+BMP085_CAL_AC3 = 0xAE  # R   Calibration data (16 bits)
+BMP085_CAL_AC4 = 0xB0  # R   Calibration data (16 bits)
+BMP085_CAL_AC5 = 0xB2  # R   Calibration data (16 bits)
+BMP085_CAL_AC6 = 0xB4  # R   Calibration data (16 bits)
+BMP085_CAL_B1 = 0xB6  # R   Calibration data (16 bits)
+BMP085_CAL_B2 = 0xB8  # R   Calibration data (16 bits)
+BMP085_CAL_MB = 0xBA  # R   Calibration data (16 bits)
+BMP085_CAL_MC = 0xBC  # R   Calibration data (16 bits)
+BMP085_CAL_MD = 0xBE  # R   Calibration data (16 bits)
+BMP085_CONTROL = 0xF4
+BMP085_TEMPDATA = 0xF6
+BMP085_PRESSUREDATA = 0xF6
 
 # Commands
-BMP085_READTEMPCMD       = 0x2E
-BMP085_READPRESSURECMD   = 0x34
+BMP085_READTEMPCMD = 0x2E
+BMP085_READPRESSURECMD = 0x34
 
 
 class BMP085(object):
-    def __init__(self, mode=BMP085_STANDARD, address=BMP085_I2CADDR, i2c=None, **kwargs):
+    def __init__(
+            self,
+            mode=BMP085_STANDARD,
+            address=BMP085_I2CADDR,
+            i2c=None,
+            **kwargs):
         self._logger = logging.getLogger('Adafruit_BMP.BMP085')
         # Check that mode is valid.
-        if mode not in [BMP085_ULTRALOWPOWER, BMP085_STANDARD, BMP085_HIGHRES, BMP085_ULTRAHIGHRES]:
-            raise ValueError('Unexpected mode value {0}.  Set mode to one of BMP085_ULTRALOWPOWER, BMP085_STANDARD, BMP085_HIGHRES, or BMP085_ULTRAHIGHRES'.format(mode))
+        if mode not in [
+                BMP085_ULTRALOWPOWER,
+                BMP085_STANDARD,
+                BMP085_HIGHRES,
+                BMP085_ULTRAHIGHRES]:
+            raise ValueError(
+                'Unexpected mode value {0}.  Set mode to one of BMP085_ULTRALOWPOWER, BMP085_STANDARD, BMP085_HIGHRES, or BMP085_ULTRAHIGHRES'.format(mode))
         self._mode = mode
         # Create I2C device.
         if i2c is None:
@@ -116,7 +126,8 @@ class BMP085(object):
 
     def read_raw_pressure(self):
         """Reads the raw (uncompensated) pressure level from the sensor."""
-        self._device.write8(BMP085_CONTROL, BMP085_READPRESSURECMD + (self._mode << 6))
+        self._device.write8(BMP085_CONTROL,
+                            BMP085_READPRESSURECMD + (self._mode << 6))
         if self._mode == BMP085_ULTRALOWPOWER:
             time.sleep(0.005)
         elif self._mode == BMP085_HIGHRES:
@@ -126,18 +137,21 @@ class BMP085(object):
         else:
             time.sleep(0.008)
         msb = self._device.readU8(BMP085_PRESSUREDATA)
-        lsb = self._device.readU8(BMP085_PRESSUREDATA+1)
-        xlsb = self._device.readU8(BMP085_PRESSUREDATA+2)
+        lsb = self._device.readU8(BMP085_PRESSUREDATA + 1)
+        xlsb = self._device.readU8(BMP085_PRESSUREDATA + 2)
         raw = ((msb << 16) + (lsb << 8) + xlsb) >> (8 - self._mode)
-        self._logger.debug('Raw pressure 0x{0:04X} ({1})'.format(raw & 0xFFFF, raw))
+        self._logger.debug(
+            'Raw pressure 0x{0:04X} ({1})'.format(
+                raw & 0xFFFF, raw))
         return raw
 
     def read_temperature(self):
         """Gets the compensated temperature in degrees celsius."""
         UT = self.read_raw_temp()
         # Datasheet value for debugging:
-        #UT = 27898
-        # Calculations below are taken straight from section 3.5 of the datasheet.
+        # UT = 27898
+        # Calculations below are taken straight from section 3.5 of the
+        # datasheet.
         X1 = ((UT - self.cal_AC6) * self.cal_AC5) >> 15
         X2 = (self.cal_MC << 11) / (X1 + self.cal_MD)
         B5 = X1 + X2
@@ -150,8 +164,8 @@ class BMP085(object):
         UT = self.read_raw_temp()
         UP = self.read_raw_pressure()
         # Datasheet values for debugging:
-        #UT = 27898
-        #UP = 23843
+        # UT = 27898
+        # UP = 23843
         # Calculations below are taken straight from section 3.5 of the datasheet.
         # Calculate true temperature coefficient B5.
         X1 = ((UT - self.cal_AC6) * self.cal_AC5) >> 15
@@ -188,7 +202,7 @@ class BMP085(object):
         """Calculates the altitude in meters."""
         # Calculation taken straight from section 3.6 of the datasheet.
         pressure = float(self.read_pressure())
-        altitude = 44330.0 * (1.0 - pow(pressure / sealevel_pa, (1.0/5.255)))
+        altitude = 44330.0 * (1.0 - pow(pressure / sealevel_pa, (1.0 / 5.255)))
         self._logger.debug('Altitude {0} m'.format(altitude))
         return altitude
 
@@ -196,6 +210,6 @@ class BMP085(object):
         """Calculates the pressure at sealevel when given a known altitude in
         meters. Returns a value in Pascals."""
         pressure = float(self.read_pressure())
-        p0 = pressure / pow(1.0 - altitude_m/44330.0, 5.255)
+        p0 = pressure / pow(1.0 - altitude_m / 44330.0, 5.255)
         self._logger.debug('Sealevel pressure {0} Pa'.format(p0))
         return p0

@@ -5,25 +5,27 @@
 # JCS 11/8/2013
 #
 
-# it is a good idea to copy this file into a file called "conflocal.py" and edit that instead of this one.  This file is wiped out if you update GroveWeatherPi.
-
+# it is a good idea to copy this file into a file called "conflocal.py"
+# and edit that instead of this one.  This file is wiped out if you update
+# GroveWeatherPi.
 
 
 mailUser = "yourusename"
 mailPassword = "yourmailpassword"
 
-notifyAddress ="you@example.com"
+notifyAddress = "you@example.com"
 
 fromAddress = "yourfromaddress@example.com"
 
 textnotifyAddress = "yourphonenumber@yourprovider"
 
-#MySQL Logging and Password Information
+# MySQL Logging and Password Information
 
 enable_MySQL_Logging = True
 MySQL_Password = "password"
 
-# modify this IP to enable WLAN operating detection  - search for WLAN_check in GroveWeatherPi.py
+# modify this IP to enable WLAN operating detection  - search for
+# WLAN_check in GroveWeatherPi.py
 enable_WLAN_Detection = True
 PingableRouterAddress = "192.168.1.1"
 
@@ -37,13 +39,13 @@ WeatherUnderground_StationKey = "YYYYYYY"
 # Blynk configuration
 ############
 
-USEBLYNK = False 
+USEBLYNK = False
 BLYNK_AUTH = 'xxxxx'
 BLYNK_URL = 'http://blynk-cloud.com/'
 
 
-
-# for barometeric pressure - needed to calculate sealevel equivalent - set your weatherstation elevation here
+# for barometeric pressure - needed to calculate sealevel equivalent - set
+# your weatherstation elevation here
 
 BMP280_Altitude_Meters = 62.0
 

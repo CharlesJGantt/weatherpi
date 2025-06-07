@@ -1,13 +1,18 @@
 #!/usr/bin/python
 
-import time, signal, sys
+import time
+import signal
+import sys
 from Adafruit_ADS1x15 import ADS1x15
 
+
 def signal_handler(signal, frame):
-        print('You pressed Ctrl+C!')
-        sys.exit(0)
+    print('You pressed Ctrl+C!')
+    sys.exit(0)
+
+
 signal.signal(signal.SIGINT, signal_handler)
-#print 'Press Ctrl+C to exit'
+# print 'Press Ctrl+C to exit'
 
 ADS1015 = 0x00  # 12-bit ADC
 ADS1115 = 0x01    # 16-bit ADC

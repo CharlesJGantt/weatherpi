@@ -69,16 +69,27 @@ class SSD1306Base(object):
     and provide an implementation for the _initialize function.
     """
 
-    def __init__(self, width, height, rst, dc=None, sclk=None, din=None, cs=None,
-                 gpio=None, spi=None, i2c_bus=None, i2c_address=SSD1306_I2C_ADDRESS,
-                 i2c=None):
+    def __init__(
+            self,
+            width,
+            height,
+            rst,
+            dc=None,
+            sclk=None,
+            din=None,
+            cs=None,
+            gpio=None,
+            spi=None,
+            i2c_bus=None,
+            i2c_address=SSD1306_I2C_ADDRESS,
+            i2c=None):
         self._log = logging.getLogger('Adafruit_SSD1306.SSD1306Base')
         self._spi = None
         self._i2c = None
         self.width = width
         self.height = height
-        self._pages = height//8
-        self._buffer = [0]*(width*self._pages)
+        self._pages = height // 8
+        self._buffer = [0] * (width * self._pages)
         # Default to platform GPIO if not provided.
         self._gpio = gpio
         if self._gpio is None:
@@ -163,10 +174,10 @@ class SSD1306Base(object):
         """Write display buffer to physical display."""
         self.command(SSD1306_COLUMNADDR)
         self.command(0)              # Column start address. (0 = reset)
-        self.command(self.width-1)   # Column end address.
+        self.command(self.width - 1)   # Column end address.
         self.command(SSD1306_PAGEADDR)
         self.command(0)              # Page start address. (0 = reset)
-        self.command(self._pages-1)  # Page end address.
+        self.command(self._pages - 1)  # Page end address.
         # Write buffer data.
         if self._spi is not None:
             # Set DC high for data.
@@ -176,7 +187,7 @@ class SSD1306Base(object):
         else:
             for i in range(0, len(self._buffer), 16):
                 control = 0x40   # Co = 0, DC = 0
-                self._i2c.writeList(control, self._buffer[i:i+16])
+                self._i2c.writeList(control, self._buffer[i:i + 16])
 
     def image(self, image):
         """Set buffer to value of Python Imaging Library image.  The image should
@@ -186,8 +197,9 @@ class SSD1306Base(object):
             raise ValueError('Image must be in mode 1.')
         imwidth, imheight = image.size
         if imwidth != self.width or imheight != self.height:
-            raise ValueError('Image must be same dimensions as display ({0}x{1}).' \
-                .format(self.width, self.height))
+            raise ValueError(
+                'Image must be same dimensions as display ({0}x{1}).' .format(
+                    self.width, self.height))
         # Grab all the pixels from the image, faster than getpixel.
         pix = image.load()
         # Iterate through the memory pages
@@ -195,25 +207,27 @@ class SSD1306Base(object):
         for page in range(self._pages):
             # Iterate through all x axis columns.
             for x in range(self.width):
-                # Set the bits for the column of pixels at the current position.
+                # Set the bits for the column of pixels at the current
+                # position.
                 bits = 0
                 # Don't use range here as it's a bit slow
                 for bit in [0, 1, 2, 3, 4, 5, 6, 7]:
                     bits = bits << 1
-                    bits |= 0 if pix[(x, page*8+7-bit)] == 0 else 1
+                    bits |= 0 if pix[(x, page * 8 + 7 - bit)] == 0 else 1
                 # Update buffer byte and increment to next byte.
                 self._buffer[index] = bits
                 index += 1
 
     def clear(self):
         """Clear contents of image buffer."""
-        self._buffer = [0]*(self.width*self._pages)
+        self._buffer = [0] * (self.width * self._pages)
 
     def set_contrast(self, contrast):
         """Sets the contrast of the display.  Contrast should be a value between
         0 and 255."""
         if contrast < 0 or contrast > 255:
-            raise ValueError('Contrast must be a value from 0 to 255 (inclusive).')
+            raise ValueError(
+                'Contrast must be a value from 0 to 255 (inclusive).')
         self.command(SSD1306_SETCONTRAST)
         self.command(contrast)
 
@@ -236,14 +250,28 @@ class SSD1306_128_64(SSD1306Base):
                  spi=None, i2c_bus=None, i2c_address=SSD1306_I2C_ADDRESS,
                  i2c=None):
         # Call base class constructor.
-        super(SSD1306_128_64, self).__init__(128, 64, rst, dc, sclk, din, cs,
-                                             gpio, spi, i2c_bus, i2c_address, i2c)
+        super(
+            SSD1306_128_64,
+            self).__init__(
+            128,
+            64,
+            rst,
+            dc,
+            sclk,
+            din,
+            cs,
+            gpio,
+            spi,
+            i2c_bus,
+            i2c_address,
+            i2c)
 
     def _initialize(self):
         # 128x64 pixel specific initialization.
         self.command(SSD1306_DISPLAYOFF)                    # 0xAE
         self.command(SSD1306_SETDISPLAYCLOCKDIV)            # 0xD5
-        self.command(0x80)                                  # the suggested ratio 0x80
+        # the suggested ratio 0x80
+        self.command(0x80)
         self.command(SSD1306_SETMULTIPLEX)                  # 0xA8
         self.command(0x3F)
         self.command(SSD1306_SETDISPLAYOFFSET)              # 0xD3
@@ -255,7 +283,8 @@ class SSD1306_128_64(SSD1306Base):
         else:
             self.command(0x14)
         self.command(SSD1306_MEMORYMODE)                    # 0x20
-        self.command(0x00)                                  # 0x0 act like ks0108
+        # 0x0 act like ks0108
+        self.command(0x00)
         self.command(SSD1306_SEGREMAP | 0x1)
         self.command(SSD1306_COMSCANDEC)
         self.command(SSD1306_SETCOMPINS)                    # 0xDA
@@ -281,14 +310,28 @@ class SSD1306_128_32(SSD1306Base):
                  spi=None, i2c_bus=None, i2c_address=SSD1306_I2C_ADDRESS,
                  i2c=None):
         # Call base class constructor.
-        super(SSD1306_128_32, self).__init__(128, 32, rst, dc, sclk, din, cs,
-                                             gpio, spi, i2c_bus, i2c_address, i2c)
+        super(
+            SSD1306_128_32,
+            self).__init__(
+            128,
+            32,
+            rst,
+            dc,
+            sclk,
+            din,
+            cs,
+            gpio,
+            spi,
+            i2c_bus,
+            i2c_address,
+            i2c)
 
     def _initialize(self):
         # 128x32 pixel specific initialization.
         self.command(SSD1306_DISPLAYOFF)                    # 0xAE
         self.command(SSD1306_SETDISPLAYCLOCKDIV)            # 0xD5
-        self.command(0x80)                                  # the suggested ratio 0x80
+        # the suggested ratio 0x80
+        self.command(0x80)
         self.command(SSD1306_SETMULTIPLEX)                  # 0xA8
         self.command(0x1F)
         self.command(SSD1306_SETDISPLAYOFFSET)              # 0xD3
@@ -300,7 +343,8 @@ class SSD1306_128_32(SSD1306Base):
         else:
             self.command(0x14)
         self.command(SSD1306_MEMORYMODE)                    # 0x20
-        self.command(0x00)                                  # 0x0 act like ks0108
+        # 0x0 act like ks0108
+        self.command(0x00)
         self.command(SSD1306_SEGREMAP | 0x1)
         self.command(SSD1306_COMSCANDEC)
         self.command(SSD1306_SETCOMPINS)                    # 0xDA
@@ -323,14 +367,28 @@ class SSD1306_96_16(SSD1306Base):
                  spi=None, i2c_bus=None, i2c_address=SSD1306_I2C_ADDRESS,
                  i2c=None):
         # Call base class constructor.
-        super(SSD1306_96_16, self).__init__(96, 16, rst, dc, sclk, din, cs,
-                                            gpio, spi, i2c_bus, i2c_address, i2c)
+        super(
+            SSD1306_96_16,
+            self).__init__(
+            96,
+            16,
+            rst,
+            dc,
+            sclk,
+            din,
+            cs,
+            gpio,
+            spi,
+            i2c_bus,
+            i2c_address,
+            i2c)
 
     def _initialize(self):
         # 128x32 pixel specific initialization.
         self.command(SSD1306_DISPLAYOFF)                    # 0xAE
         self.command(SSD1306_SETDISPLAYCLOCKDIV)            # 0xD5
-        self.command(0x60)                                  # the suggested ratio 0x60
+        # the suggested ratio 0x60
+        self.command(0x60)
         self.command(SSD1306_SETMULTIPLEX)                  # 0xA8
         self.command(0x0F)
         self.command(SSD1306_SETDISPLAYOFFSET)              # 0xD3
@@ -342,7 +400,8 @@ class SSD1306_96_16(SSD1306Base):
         else:
             self.command(0x14)
         self.command(SSD1306_MEMORYMODE)                    # 0x20
-        self.command(0x00)                                  # 0x0 act like ks0108
+        # 0x0 act like ks0108
+        self.command(0x00)
         self.command(SSD1306_SEGREMAP | 0x1)
         self.command(SSD1306_COMSCANDEC)
         self.command(SSD1306_SETCOMPINS)                    # 0xDA
