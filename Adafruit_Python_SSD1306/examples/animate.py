@@ -95,7 +95,7 @@ print('Press Ctrl-C to quit.')
 pos = startpos
 while True:
     # Clear image buffer by drawing a black filled box.
-    draw.rectangle((0,0,width,height), outline=0, fill=0)
+    draw.rectangle((0, 0, width, height), outline=0, fill=0)
     # Enumerate characters and draw them offset vertically based on a sine wave.
     x = pos
     for i, c in enumerate(text):

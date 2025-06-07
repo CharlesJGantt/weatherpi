@@ -18,7 +18,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-from __future__ import division
+
 import logging
 import time
 
@@ -186,8 +186,8 @@ class SSD1306Base(object):
             raise ValueError('Image must be in mode 1.')
         imwidth, imheight = image.size
         if imwidth != self.width or imheight != self.height:
-            raise ValueError('Image must be same dimensions as display ({0}x{1}).' \
-                .format(self.width, self.height))
+            raise ValueError('Image must be same dimensions as display ({0}x{1}).'
+                             .format(self.width, self.height))
         # Grab all the pixels from the image, faster than getpixel.
         pix = image.load()
         # Iterate through the memory pages
@@ -213,7 +213,8 @@ class SSD1306Base(object):
         """Sets the contrast of the display.  Contrast should be a value between
         0 and 255."""
         if contrast < 0 or contrast > 255:
-            raise ValueError('Contrast must be a value from 0 to 255 (inclusive).')
+            raise ValueError(
+                'Contrast must be a value from 0 to 255 (inclusive).')
         self.command(SSD1306_SETCONTRAST)
         self.command(contrast)
 
@@ -243,7 +244,8 @@ class SSD1306_128_64(SSD1306Base):
         # 128x64 pixel specific initialization.
         self.command(SSD1306_DISPLAYOFF)                    # 0xAE
         self.command(SSD1306_SETDISPLAYCLOCKDIV)            # 0xD5
-        self.command(0x80)                                  # the suggested ratio 0x80
+        # the suggested ratio 0x80
+        self.command(0x80)
         self.command(SSD1306_SETMULTIPLEX)                  # 0xA8
         self.command(0x3F)
         self.command(SSD1306_SETDISPLAYOFFSET)              # 0xD3
@@ -255,7 +257,8 @@ class SSD1306_128_64(SSD1306Base):
         else:
             self.command(0x14)
         self.command(SSD1306_MEMORYMODE)                    # 0x20
-        self.command(0x00)                                  # 0x0 act like ks0108
+        # 0x0 act like ks0108
+        self.command(0x00)
         self.command(SSD1306_SEGREMAP | 0x1)
         self.command(SSD1306_COMSCANDEC)
         self.command(SSD1306_SETCOMPINS)                    # 0xDA
@@ -288,7 +291,8 @@ class SSD1306_128_32(SSD1306Base):
         # 128x32 pixel specific initialization.
         self.command(SSD1306_DISPLAYOFF)                    # 0xAE
         self.command(SSD1306_SETDISPLAYCLOCKDIV)            # 0xD5
-        self.command(0x80)                                  # the suggested ratio 0x80
+        # the suggested ratio 0x80
+        self.command(0x80)
         self.command(SSD1306_SETMULTIPLEX)                  # 0xA8
         self.command(0x1F)
         self.command(SSD1306_SETDISPLAYOFFSET)              # 0xD3
@@ -300,7 +304,8 @@ class SSD1306_128_32(SSD1306Base):
         else:
             self.command(0x14)
         self.command(SSD1306_MEMORYMODE)                    # 0x20
-        self.command(0x00)                                  # 0x0 act like ks0108
+        # 0x0 act like ks0108
+        self.command(0x00)
         self.command(SSD1306_SEGREMAP | 0x1)
         self.command(SSD1306_COMSCANDEC)
         self.command(SSD1306_SETCOMPINS)                    # 0xDA
@@ -330,7 +335,8 @@ class SSD1306_96_16(SSD1306Base):
         # 128x32 pixel specific initialization.
         self.command(SSD1306_DISPLAYOFF)                    # 0xAE
         self.command(SSD1306_SETDISPLAYCLOCKDIV)            # 0xD5
-        self.command(0x60)                                  # the suggested ratio 0x60
+        # the suggested ratio 0x60
+        self.command(0x60)
         self.command(SSD1306_SETMULTIPLEX)                  # 0xA8
         self.command(0x0F)
         self.command(SSD1306_SETDISPLAYOFFSET)              # 0xD3
@@ -342,7 +348,8 @@ class SSD1306_96_16(SSD1306Base):
         else:
             self.command(0x14)
         self.command(SSD1306_MEMORYMODE)                    # 0x20
-        self.command(0x00)                                  # 0x0 act like ks0108
+        # 0x0 act like ks0108
+        self.command(0x00)
         self.command(SSD1306_SEGREMAP | 0x1)
         self.command(SSD1306_COMSCANDEC)
         self.command(SSD1306_SETCOMPINS)                    # 0xDA

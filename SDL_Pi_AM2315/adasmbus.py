@@ -27,29 +27,29 @@ import struct
 
 # I2C C API constants (from linux kernel headers)
 # pylint: disable=bad-whitespace
-I2C_M_TEN             = 0x0010  # this is a ten bit chip address
-I2C_M_RD              = 0x0001  # read data, from slave to master
-I2C_M_STOP            = 0x8000  # if I2C_FUNC_PROTOCOL_MANGLING
-I2C_M_NOSTART         = 0x4000  # if I2C_FUNC_NOSTART
-I2C_M_REV_DIR_ADDR    = 0x2000  # if I2C_FUNC_PROTOCOL_MANGLING
-I2C_M_IGNORE_NAK      = 0x1000  # if I2C_FUNC_PROTOCOL_MANGLING
-I2C_M_NO_RD_ACK       = 0x0800  # if I2C_FUNC_PROTOCOL_MANGLING
-I2C_M_RECV_LEN        = 0x0400  # length will be first received byte
+I2C_M_TEN = 0x0010  # this is a ten bit chip address
+I2C_M_RD = 0x0001  # read data, from slave to master
+I2C_M_STOP = 0x8000  # if I2C_FUNC_PROTOCOL_MANGLING
+I2C_M_NOSTART = 0x4000  # if I2C_FUNC_NOSTART
+I2C_M_REV_DIR_ADDR = 0x2000  # if I2C_FUNC_PROTOCOL_MANGLING
+I2C_M_IGNORE_NAK = 0x1000  # if I2C_FUNC_PROTOCOL_MANGLING
+I2C_M_NO_RD_ACK = 0x0800  # if I2C_FUNC_PROTOCOL_MANGLING
+I2C_M_RECV_LEN = 0x0400  # length will be first received byte
 
-I2C_SLAVE             = 0x0703  # Use this slave address
-I2C_SLAVE_FORCE       = 0x0706  # Use this slave address, even if
-                                # is already in use by a driver!
-I2C_TENBIT            = 0x0704  # 0 for 7 bit addrs, != 0 for 10 bit
-I2C_FUNCS             = 0x0705  # Get the adapter functionality mask
-I2C_RDWR              = 0x0707  # Combined R/W transfer (one STOP only)
-I2C_PEC               = 0x0708  # != 0 to use PEC with SMBus
-I2C_SMBUS             = 0x0720  # SMBus transfer
+I2C_SLAVE = 0x0703  # Use this slave address
+I2C_SLAVE_FORCE = 0x0706  # Use this slave address, even if
+# is already in use by a driver!
+I2C_TENBIT = 0x0704  # 0 for 7 bit addrs, != 0 for 10 bit
+I2C_FUNCS = 0x0705  # Get the adapter functionality mask
+I2C_RDWR = 0x0707  # Combined R/W transfer (one STOP only)
+I2C_PEC = 0x0708  # != 0 to use PEC with SMBus
+I2C_SMBUS = 0x0720  # SMBus transfer
 # pylint: enable=bad-whitespace
 
 
 # ctypes versions of I2C structs defined by kernel.
 # Tone down pylint for the Python classes that mirror C structs.
-#pylint: disable=invalid-name,too-few-public-methods
+# pylint: disable=invalid-name,too-few-public-methods
 class i2c_msg(Structure):
     """Linux i2c_msg struct."""
     _fields_ = [
@@ -59,13 +59,15 @@ class i2c_msg(Structure):
         ('buf', POINTER(c_uint8))
     ]
 
-class i2c_rdwr_ioctl_data(Structure): #pylint: disable=invalid-name
+
+class i2c_rdwr_ioctl_data(Structure):  # pylint: disable=invalid-name
     """Linux i2c data struct."""
     _fields_ = [
         ('msgs', POINTER(i2c_msg)),
         ('nmsgs', c_uint32)
     ]
-#pylint: enable=invalid-name,too-few-public-methods
+# pylint: enable=invalid-name,too-few-public-methods
+
 
 def make_i2c_rdwr_data(messages):
     """Utility function to create and return an i2c_rdwr_ioctl_data structure
@@ -89,7 +91,9 @@ def make_i2c_rdwr_data(messages):
     return data
 
 # Create an interface that mimics the Python SMBus API.
-class SMBus(object): # pylint: disable=useless-object-inheritance
+
+
+class SMBus(object):  # pylint: disable=useless-object-inheritance
     """I2C interface that mimics the Python SMBus API but is implemented with
     pure Python calls to ioctl and direct /dev/i2c device access.
     """
@@ -181,7 +185,8 @@ class SMBus(object): # pylint: disable=useless-object-inheritance
         # Build ioctl request.
         request = make_i2c_rdwr_data([
             (addr, 0, 1, pointer(reg)),             # Write cmd register.
-            (addr, I2C_M_RD, 2, cast(pointer(result), POINTER(c_uint8)))   # Read word (2 bytes).
+            # Read word (2 bytes).
+            (addr, I2C_M_RD, 2, cast(pointer(result), POINTER(c_uint8)))
         ])
         # Make ioctl call and return result data.
         ioctl(self._device.fileno(), I2C_RDWR, request)
@@ -208,13 +213,15 @@ class SMBus(object): # pylint: disable=useless-object-inheritance
         result = create_string_buffer(length)
         # Build ioctl request.
         request = make_i2c_rdwr_data([
-            #(addr, 0, 1, pointer(reg)),             # Write cmd register.
-            (addr, I2C_M_RD, length, cast(result, POINTER(c_uint8)))   # Read data.
-            
+            # (addr, 0, 1, pointer(reg)),             # Write cmd register.
+            # Read data.
+            (addr, I2C_M_RD, length, cast(result, POINTER(c_uint8)))
+
         ])
         # Make ioctl call and return result data.
         ioctl(self._device.fileno(), I2C_RDWR, request)
-        return bytearray(result.raw)  # Use .raw instead of .value which will stop at a null byte!
+        # Use .raw instead of .value which will stop at a null byte!
+        return bytearray(result.raw)
 
     def split_am2315_read_i2c_block_data(self, addr, cmd, length=32):
         """Perform a read from the specified cmd register of device.  Length number
@@ -226,20 +233,21 @@ class SMBus(object): # pylint: disable=useless-object-inheritance
         result = create_string_buffer(length)
         # Build ioctl request.
         request = make_i2c_rdwr_data([
-            #(addr, 0, 1, pointer(reg)),             # Write cmd register.
+            # (addr, 0, 1, pointer(reg)),             # Write cmd register.
             (addr, I2C_M_RD, None, None)   # Read data.
-            
+
         ])
         # Make ioctl call and return result data.
         ioctl(self._device.fileno(), I2C_RDWR, request)
         request = make_i2c_rdwr_data([
-            #(addr, 0, 1, pointer(reg)),             # Write cmd register.
+            # (addr, 0, 1, pointer(reg)),             # Write cmd register.
             (None, None, length, cast(result, POINTER(c_uint8)))   # Read data.
-            
+
         ])
         # Make ioctl call and return result data.
         ioctl(self._device.fileno(), I2C_RDWR, request)
-        return bytearray(result.raw)  # Use .raw instead of .value which will stop at a null byte!
+        # Use .raw instead of .value which will stop at a null byte!
+        return bytearray(result.raw)
 
     def read_i2c_block_data(self, addr, cmd, length=32):
         """Perform a read from the specified cmd register of device.  Length number
@@ -252,11 +260,13 @@ class SMBus(object): # pylint: disable=useless-object-inheritance
         # Build ioctl request.
         request = make_i2c_rdwr_data([
             (addr, 0, 1, pointer(reg)),             # Write cmd register.
-            (addr, I2C_M_RD, length, cast(result, POINTER(c_uint8)))   # Read data.
+            # Read data.
+            (addr, I2C_M_RD, length, cast(result, POINTER(c_uint8)))
         ])
         # Make ioctl call and return result data.
         ioctl(self._device.fileno(), I2C_RDWR, request)
-        return bytearray(result.raw)  # Use .raw instead of .value which will stop at a null byte!
+        # Use .raw instead of .value which will stop at a null byte!
+        return bytearray(result.raw)
 
     def write_quick(self, addr):
         """Write a single byte to the specified device."""
@@ -330,8 +340,9 @@ class SMBus(object): # pylint: disable=useless-object-inheritance
         # Construct a string of data to send, including room for the command register.
         data = bytearray(len(vals)+1)
         data[0] = cmd & 0xFF  # Command register at the start.
-        data[1:] = vals[0:]   # Copy in the block data (ugly but necessary to ensure
-                              # the entire write happens in one transaction).
+        # Copy in the block data (ugly but necessary to ensure
+        data[1:] = vals[0:]
+        # the entire write happens in one transaction).
         # Send the data to the device.
         self._select_device(addr)
         self._device.write(data)
@@ -347,8 +358,10 @@ class SMBus(object): # pylint: disable=useless-object-inheritance
         result = c_uint16()
         # Build ioctl request.
         request = make_i2c_rdwr_data([
-            (addr, 0, 3, cast(pointer(data), POINTER(c_uint8))),          # Write data.
-            (addr, I2C_M_RD, 2, cast(pointer(result), POINTER(c_uint8)))  # Read word (2 bytes).
+            # Write data.
+            (addr, 0, 3, cast(pointer(data), POINTER(c_uint8))),
+            # Read word (2 bytes).
+            (addr, I2C_M_RD, 2, cast(pointer(result), POINTER(c_uint8)))
         ])
         # Make ioctl call and return result data.
         ioctl(self._device.fileno(), I2C_RDWR, request)

@@ -1,14 +1,14 @@
 
-#utility programs
+# utility programs
 import state
 import updateBlynk
 import RPi.GPIO as GPIO
 
 # Check for user imports
 try:
-                import conflocal as config
+    import conflocal as config
 except ImportError:
-                import config
+    import config
 
 GPIO.setmode(GPIO.BCM)
 
@@ -18,50 +18,56 @@ GPIO.setmode(GPIO.BCM)
 
 GROVEPOWERSAVEPIN = 12
 
+
 def turnOLEDOn():
-        GPIO.setup(GROVEPOWERSAVEPIN, GPIO.OUT)
-        GPIO.output(GROVEPOWERSAVEPIN, True)
-        if (config.USEBLYNK):
-            updateBlynk.blynkStatusTerminalUpdate("OLED Turned On")
+    GPIO.setup(GROVEPOWERSAVEPIN, GPIO.OUT)
+    GPIO.output(GROVEPOWERSAVEPIN, True)
+    if (config.USEBLYNK):
+        updateBlynk.blynkStatusTerminalUpdate("OLED Turned On")
+
+
 def turnOLEDOff():
-        GPIO.setup(GROVEPOWERSAVEPIN, GPIO.OUT)
-        GPIO.output(GROVEPOWERSAVEPIN, False)
-        if (config.USEBLYNK):
-            updateBlynk.blynkStatusTerminalUpdate("OLED Turned Off")
+    GPIO.setup(GROVEPOWERSAVEPIN, GPIO.OUT)
+    GPIO.output(GROVEPOWERSAVEPIN, False)
+    if (config.USEBLYNK):
+        updateBlynk.blynkStatusTerminalUpdate("OLED Turned Off")
 
 
 ################
 # Unit Conversion
 ################
-# 
+#
 
 def returnTemperatureCF(temperature):
-	if (state.EnglishMetric == True):
-		# return Metric 
-		return temperature
-	else:
-		return (9.0/5.0)*temperature + 32.0
+    if (state.EnglishMetric == True):
+        # return Metric
+        return temperature
+    else:
+        return (9.0/5.0)*temperature + 32.0
+
 
 def returnTemperatureCFUnit():
-	if (state.EnglishMetric == True):
-		# return Metric 
-		return "C"
-	else:
-		return  "F"
+    if (state.EnglishMetric == True):
+        # return Metric
+        return "C"
+    else:
+        return "F"
+
 
 def returnWindSpeedUnit():
-	if (state.EnglishMetric == True):
-		# return Metric 
-		return "KPH"
-	else:
-		return  "MPH"
+    if (state.EnglishMetric == True):
+        # return Metric
+        return "KPH"
+    else:
+        return "MPH"
+
 
 def returnWindSpeed(wind):
-	if (state.EnglishMetric == True):
-		# return Metric 
-		return wind
-	else:
-		return wind/1.6
+    if (state.EnglishMetric == True):
+        # return Metric
+        return wind
+    else:
+        return wind/1.6
 
 
 def returnWindDirection(windDirection):

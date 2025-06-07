@@ -23,9 +23,9 @@ class CRCCCITT(object):
     def __init__(self, version='XModem'):
         try:
             dict_versions = {'XModem': 0x0000, 'FFFF': 0xffff, '1D0F': 0x1d0f}
-            if version not in dict_versions.keys():
+            if version not in list(dict_versions.keys()):
                 raise Exception("Your version parameter should be one of \
-                    the {} options".format("|".join(dict_versions.keys())))
+                    the {} options".format("|".join(list(dict_versions.keys()))))
 
             self.starting_value = dict_versions[version]
 
@@ -33,7 +33,7 @@ class CRCCCITT(object):
             if not len(self.crc_ccitt_table):
                 self.init_crc_table()
         except Exception as e:
-            print("EXCEPTION(__init__): {}".format(e))
+            print(("EXCEPTION(__init__): {}".format(e)))
 
     def calculate(self, input_data=None):
         try:
@@ -49,11 +49,12 @@ class CRCCCITT(object):
             for c in input_data:
                 d = ord(c) if is_string else c
                 tmp = ((crc_value >> 8) & 0xff) ^ d
-                crc_value = ((crc_value << 8) & 0xff00) ^ self.crc_ccitt_table[tmp]
+                crc_value = ((crc_value << 8) &
+                             0xff00) ^ self.crc_ccitt_table[tmp]
 
             return crc_value
         except Exception as e:
-            print("EXCEPTION(calculate): {}".format(e))
+            print(("EXCEPTION(calculate): {}".format(e)))
 
     def init_crc_table(self):
         """The algorithm uses tables with precalculated values"""

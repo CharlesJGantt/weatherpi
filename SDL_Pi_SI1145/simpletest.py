@@ -22,11 +22,11 @@
 # THE SOFTWARE.
 
 # Can enable debug output by uncommenting:
-#import logging
-#logging.basicConfig(level=logging.DEBUG)
+# import logging
+# logging.basicConfig(level=logging.DEBUG)
 
 import time
-import SDL_Pi_SI1145 
+import SDL_Pi_SI1145
 import SI1145Lux
 
 # Default constructor will pick a default I2C bus.
@@ -40,23 +40,22 @@ import SI1145Lux
 
 sensor = SDL_Pi_SI1145.SDL_Pi_SI1145()
 
-print 'Press Cntrl + Z to cancel'
+print('Press Cntrl + Z to cancel')
 
 while True:
-        vis = sensor.readVisible()
-        IR = sensor.readIR()
-        UV = sensor.readUV()
-        IR_Lux = SI1145Lux.SI1145_IR_to_Lux(IR)
-        vis_Lux = SI1145Lux.SI1145_VIS_to_Lux(vis)
-        uvIndex = UV / 100.0
-	print '--------------------'
-	print 'Vis:             ' + str(vis)
-        print 'IR:              ' + str(IR)
-	print 'UV:		' + str(UV)
-	print '--------------------'
-        print 'Vis Lux:             ' + str(vis_Lux)
-        print 'IR Lux:              ' + str(IR_Lux)
-        print 'UV Index:        ' + str(uvIndex)
-	print '--------------------'
-        time.sleep(5)
-
+    vis = sensor.readVisible()
+    IR = sensor.readIR()
+    UV = sensor.readUV()
+    IR_Lux = SI1145Lux.SI1145_IR_to_Lux(IR)
+    vis_Lux = SI1145Lux.SI1145_VIS_to_Lux(vis)
+    uvIndex = UV / 100.0
+    print('--------------------')
+    print('Vis:             ' + str(vis))
+    print('IR:              ' + str(IR))
+    print('UV:		' + str(UV))
+    print('--------------------')
+    print('Vis Lux:             ' + str(vis_Lux))
+    print('IR Lux:              ' + str(IR_Lux))
+    print('UV Index:        ' + str(uvIndex))
+    print('--------------------')
+    time.sleep(5)

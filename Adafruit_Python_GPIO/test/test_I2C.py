@@ -43,7 +43,8 @@ class MockSMBus(object):
         self._read = {}
 
     def _write_register(self, address, register, value):
-        self._written.setdefault(address, {}).setdefault(register, []).append(value)
+        self._written.setdefault(address, {}).setdefault(
+            register, []).append(value)
 
     def _read_register(self, address, register):
         return self._read.get(address).get(register).pop(0)
@@ -82,11 +83,12 @@ def create_device(address, busnum):
         import Adafruit_GPIO.I2C as I2C
         return (I2C.Device(address, busnum), smbus, mockbus)
 
+
 def safe_import_i2c():
     # Mock the smbus module and inject it into the global namespace so the
     # Adafruit_GPIO.I2C module can be imported.  The imported I2C module is
     # returned so global functions can be called on it.
-    with patch.dict('sys.modules', {'smbus': Mock() }):
+    with patch.dict('sys.modules', {'smbus': Mock()}):
         import Adafruit_GPIO.I2C as I2C
         return I2C
 
@@ -102,54 +104,54 @@ class TestI2CDevice(unittest.TestCase):
     def test_write8(self):
         device, smbus, mockbus = create_device(0x1F, 1)
         device.write8(0xFE, 0xED)
-        self.assertDictEqual(mockbus._written, { 0x1F: { 0xFE: [0xED] }})
+        self.assertDictEqual(mockbus._written, {0x1F: {0xFE: [0xED]}})
 
     def test_write8_truncates_to_8bits(self):
         device, smbus, mockbus = create_device(0x1F, 1)
         device.write8(0xFE, 0xBEEFED)
-        self.assertDictEqual(mockbus._written, { 0x1F: { 0xFE: [0xED] }})
+        self.assertDictEqual(mockbus._written, {0x1F: {0xFE: [0xED]}})
 
     def test_write16(self):
         device, smbus, mockbus = create_device(0x1F, 1)
         device.write16(0xFE, 0xBEEF)
-        self.assertDictEqual(mockbus._written, { 0x1F: { 0xFE: [0xBE],
-                                                         0xFF: [0xEF] }})
+        self.assertDictEqual(mockbus._written, {0x1F: {0xFE: [0xBE],
+                                                       0xFF: [0xEF]}})
 
     def test_write16_truncates_to_8bits(self):
         device, smbus, mockbus = create_device(0x1F, 1)
         device.write16(0xFE, 0xFEEDBEEF)
-        self.assertDictEqual(mockbus._written, { 0x1F: { 0xFE: [0xBE],
-                                                         0xFF: [0xEF] }})
+        self.assertDictEqual(mockbus._written, {0x1F: {0xFE: [0xBE],
+                                                       0xFF: [0xEF]}})
 
     def test_writeList(self):
         device, smbus, mockbus = create_device(0x1F, 1)
         device.writeList(0x00, [0xFE, 0xED, 0xBE, 0xEF])
-        self.assertDictEqual(mockbus._written, { 0x1F: { 0x00: [0xFE],
-                                                         0x01: [0xED],
-                                                         0x02: [0xBE],
-                                                         0x03: [0xEF] }})
+        self.assertDictEqual(mockbus._written, {0x1F: {0x00: [0xFE],
+                                                       0x01: [0xED],
+                                                       0x02: [0xBE],
+                                                       0x03: [0xEF]}})
 
     def test_readU8(self):
         device, smbus, mockbus = create_device(0x1F, 1)
-        mockbus._read[0x1F] = { 0xFE: [0xED] }
+        mockbus._read[0x1F] = {0xFE: [0xED]}
         value = device.readU8(0xFE)
         self.assertEqual(value, 0xED)
 
     def test_readS8(self):
         device, smbus, mockbus = create_device(0x1F, 1)
-        mockbus._read[0x1F] = { 0xFE: [0xED] }
+        mockbus._read[0x1F] = {0xFE: [0xED]}
         value = device.readS8(0xFE)
         self.assertEqual(value, -19)
 
     def test_readU16(self):
         device, smbus, mockbus = create_device(0x1F, 1)
-        mockbus._read[0x1F] = { 0xFE: [0xED], 0xFF: [0x01] }
+        mockbus._read[0x1F] = {0xFE: [0xED], 0xFF: [0x01]}
         value = device.readU16(0xFE)
         self.assertEqual(value, 0xED01)
 
     def test_readS16(self):
         device, smbus, mockbus = create_device(0x1F, 1)
-        mockbus._read[0x1F] = { 0xFE: [0xED], 0xFF: [0x01] }
+        mockbus._read[0x1F] = {0xFE: [0xED], 0xFF: [0x01]}
         value = device.readS16(0xFE)
         self.assertEqual(value, -4863)
 

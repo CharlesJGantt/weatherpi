@@ -1,4 +1,4 @@
-# PowerCurrentGraph  
+# PowerCurrentGraph
 # filename: PowerCurrentGraph.py
 # Version 1.3 09/12/13
 # Version 1.4 03/30/15
@@ -7,6 +7,10 @@
 #
 #
 
+import MySQLdb as mdb
+import pylab
+from matplotlib import dates
+from matplotlib import pyplot
 import sys
 import time
 import RPi.GPIO as GPIO
@@ -18,120 +22,115 @@ import matplotlib
 # Force matplotlib to not use any Xwindows backend.
 matplotlib.use('Agg')
 
-from matplotlib import pyplot
-from matplotlib import dates
-
-import pylab
-
-import MySQLdb as mdb
 
 # Check for user imports
 try:
-        import conflocal as config
+    import conflocal as config
 except ImportError:
-        import config
-
-def  PowerCurrentGraph(source,days,delay):
+    import config
 
 
-	
-	print("PowerCurrentGraph source:%s days:%s delay:%i" % (source,days,delay))
-	print("sleeping :",delay)
-	time.sleep(delay)
-	print("PowerCurrentGraph running now")
-	
-        # blink GPIO LED when it's run
-        GPIO.setup(18, GPIO.OUT)
-        GPIO.output(18, True)
-        time.sleep(0.2)
-        GPIO.output(18, False)
+def PowerCurrentGraph(source, days, delay):
 
-	# now we have get the data, stuff it in the graph 
+    print(("PowerCurrentGraph source:%s days:%s delay:%i" % (source, days, delay)))
+    print(("sleeping :", delay))
+    time.sleep(delay)
+    print("PowerCurrentGraph running now")
 
-	try:
-		print("trying database")
-    		db = mdb.connect('localhost', 'root', config.MySQL_Password, 'GroveWeatherPi');
+    # blink GPIO LED when it's run
+    GPIO.setup(18, GPIO.OUT)
+    GPIO.output(18, True)
+    time.sleep(0.2)
+    GPIO.output(18, False)
 
-    		cursor = db.cursor()
+    # now we have get the data, stuff it in the graph
 
-		query = "SELECT TimeStamp, solarCurrent, batteryCurrent, loadCurrent FROM PowerSystem where  now() - interval %i hour < TimeStamp" % (days*24)
-		cursor.execute(query)
-		result = cursor.fetchall()
+    try:
+        print("trying database")
+        db = mdb.connect('localhost', 'root',
+                         config.MySQL_Password, 'GroveWeatherPi')
 
-		t = []
-		s = []
-		u = []
-		v = []
-		#x = []
-		
-		for record in result:
-  			t.append(record[0])
-  			s.append(record[1])
-  			u.append(record[2])
-  			v.append(record[3])
-  			#x.append(record[4])
-		fig = pyplot.figure()
+        cursor = db.cursor()
 
+        query = "SELECT TimeStamp, solarCurrent, batteryCurrent, loadCurrent FROM PowerSystem where  now() - interval %i hour < TimeStamp" % (days*24)
+        cursor.execute(query)
+        result = cursor.fetchall()
 
-		print ("count of t=",len(t))
-		#print (t)
-		if (len(t) == 0):
-			return
-		#dts = map(datetime.datetime.fromtimestamp, t)
-		#print dts
-		#fds = dates.date2num(t) # converted
-		# matplotlib date format object
-		hfmt = dates.DateFormatter('%m/%d-%H')
+        t = []
+        s = []
+        u = []
+        v = []
+        # x = []
 
-		fig.set_facecolor('white')
-		ax = fig.add_subplot(111,axisbg = 'white')
-		#ax.vlines(fds, -200.0, 1000.0,colors='w')
+        for record in result:
+            t.append(record[0])
+            s.append(record[1])
+            u.append(record[2])
+            v.append(record[3])
+            # x.append(record[4])
+        fig = pyplot.figure()
 
-		ax.xaxis.set_major_locator(dates.HourLocator(interval=6))
-		ax.xaxis.set_major_formatter(hfmt)
-		ax.set_ylim(bottom = -200.0)
-		pyplot.xticks(rotation='vertical')
-		pyplot.subplots_adjust(bottom=.3)
-		pylab.plot(t, s, color='b',label="Solar",linestyle="-",marker=".")
-		pylab.plot(t, u, color='r',label="Battery",linestyle="-",marker=".")
-		pylab.plot(t, v, color='g',label="Load",linestyle="-",marker=".")
-		#pylab.plot(t, x, color='m',label="Power Eff",linestyle="-",marker=".")
-		pylab.xlabel("Hours")
-		pylab.ylabel("Current ma")
-		pylab.legend(loc='upper left')
+        print(("count of t=", len(t)))
+        # print (t)
+        if (len(t) == 0):
+            return
+        # dts = map(datetime.datetime.fromtimestamp, t)
+        # print dts
+        # fds = dates.date2num(t) # converted
+        # matplotlib date format object
+        hfmt = dates.DateFormatter('%m/%d-%H')
 
-		if (max(u) > max(s)):
-			myMax = max(u)+ 100.0
-		else:
-			myMax = max(s)
-		pylab.axis([min(t), max(t), min(u), myMax])
-		pylab.figtext(.5, .05, ("GroveWeatherPi Power Current Last %i Days" % days),fontsize=18,ha='center')
-		pyplot.setp( ax.xaxis.get_majorticklabels(), rotation=70)
+        fig.set_facecolor('white')
+        ax = fig.add_subplot(111, axisbg='white')
+        # ax.vlines(fds, -200.0, 1000.0,colors='w')
 
-		pylab.grid(True)
+        ax.xaxis.set_major_locator(dates.HourLocator(interval=6))
+        ax.xaxis.set_major_formatter(hfmt)
+        ax.set_ylim(bottom=-200.0)
+        pyplot.xticks(rotation='vertical')
+        pyplot.subplots_adjust(bottom=.3)
+        pylab.plot(t, s, color='b', label="Solar", linestyle="-", marker=".")
+        pylab.plot(t, u, color='r', label="Battery", linestyle="-", marker=".")
+        pylab.plot(t, v, color='g', label="Load", linestyle="-", marker=".")
+        # pylab.plot(t, x, color='m',label="Power Eff",linestyle="-",marker=".")
+        pylab.xlabel("Hours")
+        pylab.ylabel("Current ma")
+        pylab.legend(loc='upper left')
 
-		pyplot.show()
-		try:
-			pyplot.savefig("/home/pi/RasPiConnectServer/static/PowerCurrentGraph.png",facecolor=fig.get_facecolor())	
-		except:
-			pyplot.savefig("/home/pi/SDL_Pi_GroveWeatherPi/static/PowerCurrentGraph.png",facecolor=fig.get_facecolor())	
+        if (max(u) > max(s)):
+            myMax = max(u) + 100.0
+        else:
+            myMax = max(s)
+        pylab.axis([min(t), max(t), min(u), myMax])
+        pylab.figtext(.5, .05, ("GroveWeatherPi Power Current Last %i Days" %
+                      days), fontsize=18, ha='center')
+        pyplot.setp(ax.xaxis.get_majorticklabels(), rotation=70)
 
+        pylab.grid(True)
 
-	except mdb.Error, e:
-  
-    		print "Error %d: %s" % (e.args[0],e.args[1])
-    
-	finally:    
+        pyplot.show()
+        try:
+            pyplot.savefig(
+                "/home/pi/RasPiConnectServer/static/PowerCurrentGraph.png", facecolor=fig.get_facecolor())
+        except:
+            pyplot.savefig(
+                "/home/pi/SDL_Pi_GroveWeatherPi/static/PowerCurrentGraph.png", facecolor=fig.get_facecolor())
 
-		cursor.close()       	 
-        	db.close()
+    except mdb.Error as e:
 
-		del cursor
-		del db
+        print("Error %d: %s" % (e.args[0], e.args[1]))
 
-		fig.clf()
-		pyplot.close()
-		pylab.close()
-		del t, s, u, v
-		gc.collect()
-		print("PowerCurrentGrapGraph finished now")
+    finally:
+
+        cursor.close()
+        db.close()
+
+        del cursor
+        del db
+
+        fig.clf()
+        pyplot.close()
+        pylab.close()
+        del t, s, u, v
+        gc.collect()
+        print("PowerCurrentGrapGraph finished now")

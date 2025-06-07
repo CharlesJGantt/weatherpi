@@ -8,17 +8,16 @@
 # it is a good idea to copy this file into a file called "conflocal.py" and edit that instead of this one.  This file is wiped out if you update GroveWeatherPi.
 
 
-
 mailUser = "yourusename"
 mailPassword = "yourmailpassword"
 
-notifyAddress ="you@example.com"
+notifyAddress = "you@example.com"
 
 fromAddress = "yourfromaddress@example.com"
 
 textnotifyAddress = "yourphonenumber@yourprovider"
 
-#MySQL Logging and Password Information
+# MySQL Logging and Password Information
 
 enable_MySQL_Logging = True
 MySQL_Password = "password"
@@ -37,10 +36,9 @@ WeatherUnderground_StationKey = "YYYYYYY"
 # Blynk configuration
 ############
 
-USEBLYNK = False 
+USEBLYNK = False
 BLYNK_AUTH = 'xxxxx'
 BLYNK_URL = 'http://blynk-cloud.com/'
-
 
 
 # for barometeric pressure - needed to calculate sealevel equivalent - set your weatherstation elevation here
