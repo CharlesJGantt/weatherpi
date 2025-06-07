@@ -1,1 +1,1 @@
-from GPIO import *
+from .GPIO import *
