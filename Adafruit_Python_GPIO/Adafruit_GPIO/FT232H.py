@@ -29,7 +29,7 @@ import time
 
 import ftdi1 as ftdi
 
-import GPIO
+from . import GPIO
 
 
 logger = logging.getLogger(__name__)
@@ -308,9 +308,9 @@ class FT232H(GPIO.BaseGPIO):
         pins can be provided in the values dict (with pin name to pin value).
         """
         # General implementation that can be improved by subclasses.
-        for pin, mode in pins.iteritems():
+        for pin, mode in pins.items():
             self._setup_pin(pin, mode)
-        for pin, value in values.iteritems():
+        for pin, value in values.items():
             self._output_pin(pin, value)
         if write:
             self.mpsse_write_gpio()
@@ -334,7 +334,7 @@ class FT232H(GPIO.BaseGPIO):
         name to pin value (HIGH/True for 1, LOW/False for 0).  All provided pins
         will be set to the given values.
         """
-        for pin, value in pins.iteritems():
+        for pin, value in pins.items():
             self._output_pin(pin, value)
         if write:
             self.mpsse_write_gpio()

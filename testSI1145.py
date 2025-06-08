@@ -71,9 +71,9 @@ try:
     tca9545.write_control_register(TCA9545_CONFIG_BUS3)
     TCA9545_I2CMux_Present = True
 except:
-    print ">>>>>>>>>>>>>>>>>>><<<<<<<<<<<"
-    print "TCA9545 I2C Mux Not Present" 
-    print ">>>>>>>>>>>>>>>>>>><<<<<<<<<<<"
+    print(">>>>>>>>>>>>>>>>>>><<<<<<<<<<<")
+    print("TCA9545 I2C Mux Not Present") 
+    print(">>>>>>>>>>>>>>>>>>><<<<<<<<<<<")
 
 
 
@@ -92,7 +92,7 @@ time.sleep(1.0)
 
 
 
-print 'Press Cntrl + Z to cancel'
+print('Press Cntrl + Z to cancel')
 
 while True:
         vis = sensor.readVisible()
@@ -101,18 +101,18 @@ while True:
         IR_Lux = SI1145Lux.SI1145_IR_to_Lux(IR)
         vis_Lux = SI1145Lux.SI1145_VIS_to_Lux(vis)
         uvIndex = UV / 100.0
-	print '--------------------'
-	print '--------------------'
-        print 'indoor=', indoor
-	print '--------------------'
-	print 'Vis:             ' + str(vis)
-        print 'IR:              ' + str(IR)
-	print 'UV:		' + str(UV)
-	print '--------------------'
-        print 'Vis Lux:             ' + str(vis_Lux)
-        print 'IR Lux:              ' + str(IR_Lux)
-        print 'UV Index:        ' + str(uvIndex)
-	print '--------------------'
-	print '--------------------'
+	print('--------------------')
+	print('--------------------')
+        print('indoor=', indoor)
+	print('--------------------')
+	print('Vis:             ' + str(vis))
+        print('IR:              ' + str(IR))
+	print('UV:		' + str(UV))
+	print('--------------------')
+        print('Vis Lux:             ' + str(vis_Lux))
+        print('IR Lux:              ' + str(IR_Lux))
+        print('UV Index:        ' + str(uvIndex))
+	print('--------------------')
+	print('--------------------')
         time.sleep(5)
 

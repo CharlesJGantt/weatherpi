@@ -51,32 +51,32 @@ totalRain = 0
 while True:
 
 
- 	print "---------------------------------------- "
-        print "----------------- "
-        print " SDL_Pi_WeatherRack Library"
-        print " WeatherRack Weather Sensors"
-        print "----------------- "
+ 	print("---------------------------------------- ")
+        print("----------------- ")
+        print(" SDL_Pi_WeatherRack Library")
+        print(" WeatherRack Weather Sensors")
+        print("----------------- ")
         #
 
         currentWindSpeed = weatherStation.current_wind_speed()/1.609
         currentWindGust = weatherStation.get_wind_gust()/1.609
         totalRain = totalRain + (weatherStation.get_current_rain_total()/25.4)
-        print("Rain Total=\t%0.2f in")%(totalRain)
-        print("Wind Speed=\t%0.2f MPH")%(currentWindSpeed)
+        print(("Rain Total=\t%0.2f in")%(totalRain))
+        print(("Wind Speed=\t%0.2f MPH")%(currentWindSpeed))
 	if currentWindSpeed > maxEverWind:
 		maxEverWind = currentWindSpeed
 
 	if currentWindGust > maxEverGust:
 		maxEverGust = currentWindGust
 
-        print("max Ever Wind Speed=\t%0.2f MPH")%(maxEverWind)
-        print("MPH wind_gust=\t%0.2f MPH")%(currentWindGust)
-        print("max Ever Gust wind_gust=\t%0.2f MPH")%(maxEverGust)
-        print "Wind Direction=\t\t\t %0.2f Degrees" % weatherStation.current_wind_direction()
+        print(("max Ever Wind Speed=\t%0.2f MPH")%(maxEverWind))
+        print(("MPH wind_gust=\t%0.2f MPH")%(currentWindGust))
+        print(("max Ever Gust wind_gust=\t%0.2f MPH")%(maxEverGust))
+        print("Wind Direction=\t\t\t %0.2f Degrees" % weatherStation.current_wind_direction())
 
-        print "Wind Direction Voltage=\t\t %0.3f V" % weatherStation.current_wind_direction_voltage()
+        print("Wind Direction Voltage=\t\t %0.3f V" % weatherStation.current_wind_direction_voltage())
 
-        print "----------------- "
-        print "----------------- "
+        print("----------------- ")
+        print("----------------- ")
 
 	time.sleep(5.0)

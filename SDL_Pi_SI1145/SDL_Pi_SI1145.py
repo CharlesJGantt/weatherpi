@@ -266,7 +266,7 @@ class SDL_Pi_SI1145(object):
         #returns visible + IR light levels
         def readVisible(self):
                 data =  self._device.read_i2c_block_data(SI1145_ADDR,0x22,2)
-                print "data =", data
+                print("data =", data)
 		return data[1] * 256 + data[0]
 
         #returns IR light levels

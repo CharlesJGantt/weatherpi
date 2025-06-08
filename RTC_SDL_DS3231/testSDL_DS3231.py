@@ -16,12 +16,12 @@ import SDL_DS3231
 
 # Main Program
 
-print ""
-print "Test SDL_DS3231 Version 1.0 - SwitchDoc Labs"
-print ""
-print ""
-print "Program Started at:"+ time.strftime("%Y-%m-%d %H:%M:%S")
-print ""
+print("")
+print("Test SDL_DS3231 Version 1.0 - SwitchDoc Labs")
+print("")
+print("")
+print("Program Started at:"+ time.strftime("%Y-%m-%d %H:%M:%S"))
+print("")
 
 filename = time.strftime("%Y-%m-%d%H:%M:%SRTCTest") + ".txt"
 starttime = datetime.datetime.utcnow()
@@ -35,22 +35,22 @@ ds3231.write_now()
 
 # do the AT24C32 eeprom
 
-print "----------------- "
-print "----------------- "
-print " Test the AT24C32 EEPROM"
-print "----------------- "
-print "writing first 10 addresses with random data"
+print("----------------- ")
+print("----------------- ")
+print(" Test the AT24C32 EEPROM")
+print("----------------- ")
+print("writing first 10 addresses with random data")
 for x in range(0,10):
 	value = random.randint(0,255)
-	print "address = %i writing value=%i" % (x, value) 	
+	print("address = %i writing value=%i" % (x, value)) 	
 	ds3231.write_AT24C32_byte(x, value)
-print "----------------- "
+print("----------------- ")
 
-print "reading first 10 addresses"
+print("reading first 10 addresses")
 for x in range(0,10):
-	print "address = %i value = %i" %(x, ds3231.read_AT24C32_byte(x)) 
-print "----------------- "
-print "----------------- "
+	print("address = %i value = %i" %(x, ds3231.read_AT24C32_byte(x))) 
+print("----------------- ")
+print("----------------- ")
 
 
 while True:
@@ -63,10 +63,10 @@ while True:
 
 	deltatime = currenttime - starttime
  
-	print ""
-	print "Raspberry Pi=\t" + time.strftime("%Y-%m-%d %H:%M:%S")
+	print("")
+	print("Raspberry Pi=\t" + time.strftime("%Y-%m-%d %H:%M:%S"))
 	
-	print "DS3231=\t\t%s" % ds3231.read_datetime()
+	print("DS3231=\t\t%s" % ds3231.read_datetime())
 
-	print "DS3231 Temp=", ds3231.getTemp()
+	print("DS3231 Temp=", ds3231.getTemp())
 	time.sleep(10.0)

@@ -95,7 +95,7 @@ velocity = -2
 startpos = width
 
 # Animate text moving in sine wave.
-print 'Press Ctrl-C to quit.'
+print('Press Ctrl-C to quit.')
 pos = startpos
 while True:
 	# Clear image buffer by drawing a black filled box.
